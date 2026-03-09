@@ -140,7 +140,9 @@ export function GameBoard() {
   // Load saved state on mount
   useEffect(() => {
     const saved = loadGameState();
-    if (saved && saved.dateKey === dateKey) {
+    // For testing: Allow replaying without date restriction
+    // In production, change to: if (saved && saved.dateKey === dateKey) {
+    if (saved) {
       const restoredState: GameState = {
         ...createInitialState(dailyWord, dateKey),
         phase: saved.phase,

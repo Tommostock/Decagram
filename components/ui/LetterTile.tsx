@@ -87,7 +87,9 @@ export function LetterTile({
 
   return (
     <div
-      className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold transition-all duration-200 select-none`}
+      className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold transition-all duration-200 select-none
+        ${status === "correct" ? "animate-heartbeat" : ""}
+      `}
       style={{
         backgroundColor: colors.bg,
         borderColor: colors.border,
@@ -98,6 +100,7 @@ export function LetterTile({
               ? "#e8e8e8"
               : "#fff",
         transform: letter && !flipped ? "scale(1)" : undefined,
+        boxShadow: status === "correct" ? "0 0 12px rgba(34, 197, 94, 0.5)" : "none",
       }}
     >
       {letter?.toUpperCase()}

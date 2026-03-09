@@ -50,8 +50,9 @@ export function LetterPicker({
                 key={letter}
                 onClick={() => onSelectConsonant(letter)}
                 disabled={isDisabled}
-                className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg text-sm font-bold transition-all duration-150 select-none
-                  ${isDisabled ? "opacity-30 cursor-not-allowed" : "active:scale-95"}
+                className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg text-sm font-bold transition-all duration-150 select-none hover:scale-110
+                  ${isDisabled ? "opacity-30 cursor-not-allowed" : "active:scale-90"}
+                  ${isSelected ? "animate-pulse-glow" : ""}
                 `}
                 style={{
                   background: isSelected
@@ -64,6 +65,7 @@ export function LetterPicker({
                   boxShadow: isSelected
                     ? "0 0 12px rgba(245, 200, 66, 0.3)"
                     : "none",
+                  transition: "all 0.2s ease",
                 }}
               >
                 {letter}
@@ -88,8 +90,9 @@ export function LetterPicker({
                 key={letter}
                 onClick={() => onSelectVowel(letter)}
                 disabled={isDisabled}
-                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl text-lg font-bold transition-all duration-150 select-none
-                  ${isDisabled ? "opacity-30 cursor-not-allowed" : "active:scale-95"}
+                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl text-lg font-bold transition-all duration-150 select-none hover:scale-110
+                  ${isDisabled ? "opacity-30 cursor-not-allowed" : "active:scale-90"}
+                  ${isSelected ? "animate-pulse-glow" : ""}
                 `}
                 style={{
                   background: isSelected
@@ -102,6 +105,7 @@ export function LetterPicker({
                   boxShadow: isSelected
                     ? "0 0 12px rgba(245, 200, 66, 0.3)"
                     : "none",
+                  transition: "all 0.2s ease",
                 }}
               >
                 {letter}

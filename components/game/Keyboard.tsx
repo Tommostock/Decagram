@@ -49,7 +49,7 @@ export function Keyboard({
                 className={`
                   ${isSpecial ? "px-2.5 sm:px-4 text-[10px] sm:text-xs" : "w-[30px] sm:w-[36px] text-sm sm:text-base"}
                   h-[42px] sm:h-[50px] rounded-md font-semibold transition-all duration-100
-                  active:scale-95 active:brightness-75 select-none
+                  active:scale-90 active:brightness-75 hover:scale-110 hover:brightness-110 select-none
                 `}
                 style={{
                   backgroundColor: bgColor,
@@ -57,7 +57,13 @@ export function Keyboard({
                     status === "correct" || status === "present"
                       ? "#fff"
                       : "#d0d0d0",
-                  border: "1px solid rgba(255,255,255,0.05)",
+                  border: status === "correct"
+                    ? "2px solid #22c55e"
+                    : status === "present"
+                    ? "2px solid #eab308"
+                    : "1px solid rgba(255,255,255,0.05)",
+                  boxShadow: status ? `inset 0 0 8px ${statusColors[status]}` : "none",
+                  transition: "all 0.15s ease",
                 }}
               >
                 {key === "DEL" ? "\u232B" : key}

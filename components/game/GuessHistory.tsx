@@ -14,7 +14,11 @@ export function GuessHistory({ guesses, revealingIndex }: GuessHistoryProps) {
   return (
     <div className="space-y-2">
       {guesses.map((guess, guessIdx) => (
-        <div key={guessIdx} className="flex justify-center gap-1 sm:gap-1.5">
+        <div
+          key={guessIdx}
+          className="flex justify-center gap-1 sm:gap-1.5 animate-slideUp"
+          style={{ animationDelay: `${guessIdx * 100}ms` }}
+        >
           {guess.results.map((result, letterIdx) => (
             <LetterTile
               key={letterIdx}
