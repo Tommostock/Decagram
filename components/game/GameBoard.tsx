@@ -16,6 +16,7 @@ import { loadGameState, saveGameState, loadStats, saveStats } from "@/lib/storag
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { GoldenButton } from "@/components/ui/GoldenButton";
 import { Toast } from "@/components/ui/Toast";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LetterPicker } from "./LetterPicker";
 import { WordDisplay } from "./WordDisplay";
 import { GuessInput } from "./GuessInput";
@@ -395,7 +396,8 @@ export function GameBoard() {
 
       {/* Header */}
       <header className="w-full flex items-center justify-between mb-2 px-1">
-        <div className="w-8" />
+        {/* Theme toggle — always visible */}
+        <ThemeToggle />
         <div className="text-center">
           <h1
             className="text-3xl sm:text-4xl font-black tracking-widest"
@@ -408,7 +410,12 @@ export function GameBoard() {
           >
             DECAGRAM
           </h1>
-          <p className="text-xs text-[#666] tracking-wider mt-0.5">
+          <p
+            className="text-xs tracking-wider mt-0.5"
+            style={{
+              color: "var(--theme-secondary-text, #666)",
+            }}
+          >
             DAILY 10-LETTER PUZZLE
           </p>
         </div>
