@@ -12,11 +12,123 @@ interface DictDefinition {
   definition: string;
 }
 
+/**
+ * Generates an ordered list of word forms to try against the dictionary API.
+ * The exact word is tried first; progressively simpler base forms follow so
+ * that inflected 10-letter words (gerunds, adverbs, plurals, etc.) can still
+ * return a useful definition.
+ */
+function getWordVariants(word: string): string[] {
+  const w = word.toLowerCase();
+  const seen = new Set<string>([w]);
+  const variants: string[] = [w];
+
+  const add = (v: string) => {
+    if (v.length >= 3 && !seen.has(v) && /^[a-z]+$/.test(v)) {
+      seen.add(v);
+      variants.push(v);
+    }
+  };
+
+  // -LY adverbs → base adjective  (absolutely → absolute, adequately → adequate)
+  if (w.endsWith("ly")) {
+    add(w.slice(0, -2));
+    if (w.endsWith("ily")) add(w.slice(0, -3) + "y"); // happily → happy
+  }
+
+  // -ING gerunds → base verb  (abandoning → abandon, activating → activate)
+  if (w.endsWith("ing")) {
+    const stem = w.slice(0, -3);
+    add(stem);
+    add(stem + "e");
+    if (stem.length >= 2 && stem.at(-1) === stem.at(-2)) {
+      add(stem.slice(0, -1)); // committing → commit (doubled consonant)
+    }
+  }
+
+  // -ED past participle / adjective  (accredited → accredit, calculated → calculate)
+  if (w.endsWith("ed")) {
+    const stem = w.slice(0, -2);
+    add(stem);
+    add(stem + "e");
+    add(w.slice(0, -1));
+    if (stem.length >= 2 && stem.at(-1) === stem.at(-2)) {
+      add(stem.slice(0, -1)); // submitted → submit
+    }
+  }
+
+  // -IES plurals → -Y singular  (activities → activity, batteries → battery)
+  if (w.endsWith("ies")) {
+    add(w.slice(0, -3) + "y");
+  }
+
+  // -ES / -S plurals
+  if (w.endsWith("es") && !w.endsWith("ies")) {
+    add(w.slice(0, -2));
+    add(w.slice(0, -1));
+  } else if (w.endsWith("s") && !w.endsWith("ss") && !w.endsWith("es")) {
+    add(w.slice(0, -1)); // addictions → addiction
+  }
+
+  // -ATION nouns → base verb  (adaptation → adapt, accusation → accuse)
+  if (w.endsWith("ation")) {
+    add(w.slice(0, -5));
+    add(w.slice(0, -5) + "e");
+  }
+
+  // -TION / -SION nouns  (absorption → absorb is tricky; try anyway)
+  if (w.endsWith("tion") && !w.endsWith("ation")) {
+    add(w.slice(0, -4));
+    add(w.slice(0, -3) + "e");
+  }
+
+  // -ANCE / -ENCE nouns → base  (acceptance → accept, accordance → accord)
+  if (w.endsWith("ance")) {
+    add(w.slice(0, -4));
+    add(w.slice(0, -4) + "e");
+  }
+  if (w.endsWith("ence")) {
+    add(w.slice(0, -4));
+    add(w.slice(0, -4) + "e");
+  }
+
+  // -ABLE / -IBLE adjectives → base verb  (acceptable → accept, achievable → achieve)
+  if (w.endsWith("able")) {
+    add(w.slice(0, -4));
+    add(w.slice(0, -4) + "e");
+  }
+  if (w.endsWith("ible")) {
+    add(w.slice(0, -4));
+    add(w.slice(0, -4) + "e");
+  }
+
+  // -AL adjectives → base noun  (additional → addition, acoustical → acoustic)
+  if (w.endsWith("al")) {
+    add(w.slice(0, -2));
+    add(w.slice(0, -2) + "e");
+  }
+
+  // -MENT nouns → base verb  (adjustment → adjust, achievement → achieve)
+  if (w.endsWith("ment")) {
+    add(w.slice(0, -4));
+    add(w.slice(0, -4) + "e");
+  }
+
+  // -NESS nouns → base adjective  (awareness → aware, happiness → happy)
+  if (w.endsWith("ness")) {
+    add(w.slice(0, -4));
+    if (w.endsWith("iness")) add(w.slice(0, -5) + "y");
+  }
+
+  return variants;
+}
+
 export function HintModal({ word, onClose }: HintModalProps) {
   const [definitions, setDefinitions] = useState<DictDefinition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [lookedUpWord, setLookedUpWord] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 10);
@@ -25,34 +137,44 @@ export function HintModal({ word, onClose }: HintModalProps) {
 
   useEffect(() => {
     const fetchDefinition = async () => {
-      try {
-        const res = await fetch(
-          `https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`
-        );
-        if (!res.ok) throw new Error("Not found");
-        const data = await res.json();
+      const variants = getWordVariants(word);
 
-        // Collect up to 3 definitions across meanings
-        const defs: DictDefinition[] = [];
-        for (const entry of data) {
-          for (const meaning of entry.meanings) {
-            for (const def of meaning.definitions) {
+      for (const variant of variants) {
+        try {
+          const res = await fetch(
+            `https://api.dictionaryapi.dev/api/v2/entries/en/${variant}`
+          );
+          if (!res.ok) continue;
+          const data = await res.json();
+
+          const defs: DictDefinition[] = [];
+          for (const entry of data) {
+            for (const meaning of entry.meanings) {
+              for (const def of meaning.definitions) {
+                if (defs.length >= 3) break;
+                defs.push({
+                  partOfSpeech: meaning.partOfSpeech,
+                  definition: def.definition,
+                });
+              }
               if (defs.length >= 3) break;
-              defs.push({
-                partOfSpeech: meaning.partOfSpeech,
-                definition: def.definition,
-              });
             }
             if (defs.length >= 3) break;
           }
-          if (defs.length >= 3) break;
+
+          if (defs.length > 0) {
+            setDefinitions(defs);
+            setLookedUpWord(variant !== word.toLowerCase() ? variant : null);
+            setLoading(false);
+            return;
+          }
+        } catch {
+          continue;
         }
-        setDefinitions(defs);
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
       }
+
+      setError(true);
+      setLoading(false);
     };
 
     fetchDefinition();
@@ -134,6 +256,12 @@ export function HintModal({ word, onClose }: HintModalProps) {
 
         {!loading && !error && definitions.length > 0 && (
           <div className="space-y-3">
+            {lookedUpWord && (
+              <p className="text-[10px] uppercase tracking-widest pb-1" style={{ color: "#555" }}>
+                Definition for:{" "}
+                <span style={{ color: "#777" }}>{lookedUpWord.toUpperCase()}</span>
+              </p>
+            )}
             {definitions.map((def, i) => (
               <div key={i} className="space-y-0.5">
                 <span
