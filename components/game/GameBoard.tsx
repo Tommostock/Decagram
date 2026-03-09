@@ -327,7 +327,10 @@ export function GameBoard() {
 
   // Play again handler - reset game to letter selection (same active word)
   const handlePlayAgain = useCallback(() => {
-    dispatch({ type: "PLAY_AGAIN", dailyWord: activeWord });
+    const newOffset = gameOffset + 1;
+    setGameOffset(newOffset);
+    const newWord = getDailyWord(`${dateKey}-${newOffset}`);
+    dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
     saveGameState({
       dateKey,
       phase: "LETTER_SELECTION",
@@ -335,7 +338,7 @@ export function GameBoard() {
       selectedVowel: "",
       guesses: [],
     });
-  }, [activeWord, dateKey]);
+  }, [gameOffset, dateKey]);
 
   // Pause menu handlers
   const handleResume = useCallback(() => {
