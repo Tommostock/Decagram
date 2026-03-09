@@ -46,4 +46,5 @@ export interface StoredGameState {
   selectedConsonants: string[];
   selectedVowel: string;
   guesses: Guess[];
+  wordSeed?: string;
 }

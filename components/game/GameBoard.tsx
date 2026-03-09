@@ -123,9 +123,15 @@ function reducer(state: GameState, action: Action): GameState {
 export function GameBoard() {
   const dateKey = getTodayKey();
 
-  // gameOffset allows generating fresh words beyond the daily word (in-memory only)
-  const [gameOffset, setGameOffset] = useState(0);
-  const activeWord = getDailyWord(gameOffset === 0 ? dateKey : `${dateKey}-${gameOffset}`);
+  // wordSeed is a random string persisted to localStorage so that:
+  // - each new game / Play Again picks a fresh random word
+  // - refreshing mid-game restores the same word (seed loaded from saved state)
+  const [wordSeed, setWordSeed] = useState<string>(() => {
+    if (typeof window === "undefined") return Math.random().toString(36).slice(2, 8);
+    const saved = loadGameState();
+    return saved?.wordSeed ?? Math.random().toString(36).slice(2, 8);
+  });
+  const activeWord = getDailyWord(`${dateKey}-${wordSeed}`);
 
   const [state, dispatch] = useReducer(
     reducer,
@@ -195,8 +201,9 @@ export function GameBoard() {
       selectedConsonants: state.selectedConsonants,
       selectedVowel: state.selectedVowel,
       guesses: state.guesses,
+      wordSeed,
     });
-  }, [state, loaded]);
+  }, [state, loaded, wordSeed]);
 
   // Register service worker
   useEffect(() => {
@@ -327,9 +334,9 @@ export function GameBoard() {
 
   // Play again handler - reset game to letter selection (same active word)
   const handlePlayAgain = useCallback(() => {
-    const newOffset = gameOffset + 1;
-    setGameOffset(newOffset);
-    const newWord = getDailyWord(`${dateKey}-${newOffset}`);
+    const newSeed = Math.random().toString(36).slice(2, 8);
+    setWordSeed(newSeed);
+    const newWord = getDailyWord(`${dateKey}-${newSeed}`);
     dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
     saveGameState({
       dateKey,
@@ -337,8 +344,9 @@ export function GameBoard() {
       selectedConsonants: [],
       selectedVowel: "",
       guesses: [],
+      wordSeed: newSeed,
     });
-  }, [gameOffset, dateKey]);
+  }, [dateKey]);
 
   // Pause menu handlers
   const handleResume = useCallback(() => {
@@ -346,9 +354,9 @@ export function GameBoard() {
   }, []);
 
   const handleStartNewGame = useCallback(() => {
-    const newOffset = gameOffset + 1;
-    setGameOffset(newOffset);
-    const newWord = getDailyWord(`${dateKey}-${newOffset}`);
+    const newSeed = Math.random().toString(36).slice(2, 8);
+    setWordSeed(newSeed);
+    const newWord = getDailyWord(`${dateKey}-${newSeed}`);
     dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
     saveGameState({
       dateKey,
@@ -356,21 +364,10 @@ export function GameBoard() {
       selectedConsonants: [],
       selectedVowel: "",
       guesses: [],
+      wordSeed: newSeed,
     });
     setIsPaused(false);
-  }, [gameOffset, dateKey]);
-
-  const handleExit = useCallback(() => {
-    dispatch({ type: "PLAY_AGAIN", dailyWord: activeWord });
-    saveGameState({
-      dateKey,
-      phase: "LETTER_SELECTION",
-      selectedConsonants: [],
-      selectedVowel: "",
-      guesses: [],
-    });
-    setIsPaused(false);
-  }, [activeWord, dateKey]);
+  }, [dateKey]);
 
   // Don't render until loaded (prevents flash of initial state)
   if (!loaded) {
