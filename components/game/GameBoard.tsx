@@ -422,6 +422,19 @@ export function GameBoard() {
           >
             DAILY 10-LETTER PUZZLE
           </p>
+          <p className="text-[10px] tracking-wider mt-1.5 flex items-center justify-center gap-1">
+            <span style={{ color: "var(--theme-secondary-text, #888)" }}>Made by</span>
+            <span
+              style={{
+                fontFamily: '"True Lies", cursive',
+                color: "#D22223",
+                fontSize: "12px",
+                fontWeight: "bold",
+              }}
+            >
+              Spektator
+            </span>
+          </p>
         </div>
         {/* Pause button — only visible when game is active */}
         {canPause ? (

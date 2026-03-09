@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "True Lies";
+  src: url("/fonts/True Lies.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 @theme inline {
   --color-background: #0a0a0a;
   --color-foreground: #e8e8e8;
