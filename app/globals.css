@@ -196,3 +196,22 @@ html[data-theme="light"] .glass-button {
   position: relative;
   box-shadow: 0 0 12px rgba(232, 175, 72, 0.3);
 }
+
+/* Mobile keyboard dock — fixed at bottom of viewport like native iOS keyboard */
+@media (max-width: 639px) {
+  .keyboard-dock {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    background: rgba(10, 10, 10, 0.97);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 8px;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 10px);
+  }
+}

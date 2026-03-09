@@ -386,7 +386,7 @@ export function GameBoard() {
   const canPause = state.phase === "REVEAL" || state.phase === "GUESSING";
 
   return (
-    <div className="w-full max-w-lg mx-auto flex flex-col items-center gap-4">
+    <div className={`w-full max-w-lg mx-auto flex flex-col items-center gap-4 ${state.phase === "GUESSING" ? "pb-[250px] sm:pb-0" : ""}`}>
       {/* Pause menu overlay */}
       {isPaused && (
         <PauseMenu
@@ -561,7 +561,7 @@ export function GameBoard() {
           </div>
 
           {/* Keyboard */}
-          <div className="w-full pt-1">
+          <div className="keyboard-dock sm:w-full sm:pt-1">
             <Keyboard
               onKeyPress={handleKeyPress}
               onEnter={handleEnter}

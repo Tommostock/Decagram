@@ -36,9 +36,9 @@ export function Keyboard({
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto space-y-[3px] sm:space-y-1.5">
+    <div className="w-full sm:max-w-lg sm:mx-auto space-y-[3px] sm:space-y-1.5">
       {ROWS.map((row, rowIdx) => (
-        <div key={rowIdx} className="flex justify-center gap-[2px] sm:gap-1">
+        <div key={rowIdx} className="flex gap-[3px] sm:justify-center sm:gap-1">
           {row.map((key) => {
             const isSpecial = key === "ENTER" || key === "DEL";
             const status = keyboardStatus[key];
@@ -77,12 +77,12 @@ export function Keyboard({
             const isInteractive = !isAbsent && !isRevealed;
 
             return (
-              <div key={key} className="relative inline-block">
+              <div key={key} className={`relative ${isSpecial ? "flex-[1.5] sm:flex-none" : "flex-1 sm:flex-none"}`}>
                 <button
                   onClick={() => handleClick(key)}
-                  className={`glass-button
-                    ${isSpecial ? "px-2 sm:px-4 text-[10px] sm:text-xs" : "w-[32px] sm:w-[36px] text-[13px] sm:text-base"}
-                    h-[48px] sm:h-[52px] rounded-md font-semibold transition-all duration-100 select-none relative
+                  className={`glass-button w-full
+                    ${isSpecial ? "sm:w-auto sm:px-4 text-[11px] sm:text-xs" : "sm:w-[36px] text-[16px] sm:text-base"}
+                    h-[44px] sm:h-[52px] rounded-md font-semibold transition-all duration-100 select-none relative
                     ${isActive ? "active" : ""}
                     ${isInteractive ? "hover:scale-110 hover:brightness-110 active:scale-90 active:brightness-75" : ""}
                   `}
