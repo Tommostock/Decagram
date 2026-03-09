@@ -85,25 +85,34 @@ export function LetterTile({
     );
   }
 
+  const isCorrect = status === "correct";
+  const isRevealed = status === "revealed";
+
   return (
-    <div
-      className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold transition-all duration-200 select-none
-        ${status === "correct" ? "animate-heartbeat" : ""}
-      `}
-      style={{
-        backgroundColor: colors.bg,
-        borderColor: colors.border,
-        color:
-          status === "revealed"
-            ? "#f5c842"
-            : status === "empty" || status === "unknown"
-              ? "#e8e8e8"
-              : "#fff",
-        transform: letter && !flipped ? "scale(1)" : undefined,
-        boxShadow: status === "correct" ? "0 0 12px rgba(34, 197, 94, 0.5)" : "none",
-      }}
-    >
-      {letter?.toUpperCase()}
+    <div className="relative inline-block">
+      <div
+        className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold transition-all duration-200 select-none
+          ${isCorrect ? "animate-heartbeat" : ""}
+        `}
+        style={{
+          backgroundColor: colors.bg,
+          borderColor: colors.border,
+          color:
+            status === "revealed"
+              ? "#f5c842"
+              : status === "empty" || status === "unknown"
+                ? "#e8e8e8"
+                : "#fff",
+          transform: letter && !flipped ? "scale(1)" : undefined,
+          boxShadow: isCorrect ? "0 0 12px rgba(34, 197, 94, 0.5)" : "none",
+          backdropFilter: "blur(8px)",
+          background: colors.bg === "transparent"
+            ? "rgba(20, 20, 20, 0.3)"
+            : colors.bg,
+        }}
+      >
+        {letter?.toUpperCase()}
+      </div>
     </div>
   );
 }

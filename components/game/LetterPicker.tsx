@@ -46,30 +46,29 @@ export function LetterPicker({
             const isDisabled = !isSelected && consonantsFull;
 
             return (
-              <button
-                key={letter}
-                onClick={() => onSelectConsonant(letter)}
-                disabled={isDisabled}
-                className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg text-sm font-bold transition-all duration-150 select-none hover:scale-110
-                  ${isDisabled ? "opacity-30 cursor-not-allowed" : "active:scale-90"}
-                  ${isSelected ? "animate-pulse-glow" : ""}
-                `}
-                style={{
-                  background: isSelected
-                    ? "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)"
-                    : "rgba(30, 30, 30, 0.8)",
-                  color: isSelected ? "#0a0a0a" : "#e8e8e8",
-                  border: isSelected
-                    ? "2px solid #f5c842"
-                    : "1px solid rgba(255,255,255,0.08)",
-                  boxShadow: isSelected
-                    ? "0 0 12px rgba(245, 200, 66, 0.3)"
-                    : "none",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {letter}
-              </button>
+              <div key={letter} className="relative inline-block">
+                <button
+                  onClick={() => onSelectConsonant(letter)}
+                  disabled={isDisabled}
+                  className={`glass-button w-10 h-10 sm:w-11 sm:h-11 rounded-lg text-sm font-bold transition-all duration-150 select-none hover:scale-110 relative
+                    ${isDisabled ? "opacity-30 cursor-not-allowed" : "active:scale-90"}
+                    ${isSelected ? "active animate-pulse-glow" : ""}
+                  `}
+                  style={{
+                    background: isSelected
+                      ? "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)"
+                      : "rgba(30, 30, 30, 0.4)",
+                    color: isSelected ? "#0a0a0a" : "#e8e8e8",
+                    border: isSelected
+                      ? "2px solid #f5c842"
+                      : "1px solid rgba(255,255,255,0.1)",
+                    backdropFilter: "blur(12px)",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  {letter}
+                </button>
+              </div>
             );
           })}
         </div>
@@ -86,30 +85,29 @@ export function LetterPicker({
             const isDisabled = !isSelected && vowelsFull;
 
             return (
-              <button
-                key={letter}
-                onClick={() => onSelectVowel(letter)}
-                disabled={isDisabled}
-                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl text-lg font-bold transition-all duration-150 select-none hover:scale-110
-                  ${isDisabled ? "opacity-30 cursor-not-allowed" : "active:scale-90"}
-                  ${isSelected ? "animate-pulse-glow" : ""}
-                `}
-                style={{
-                  background: isSelected
-                    ? "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)"
-                    : "rgba(30, 30, 30, 0.8)",
-                  color: isSelected ? "#0a0a0a" : "#e8e8e8",
-                  border: isSelected
-                    ? "2px solid #f5c842"
-                    : "1px solid rgba(255,255,255,0.08)",
-                  boxShadow: isSelected
-                    ? "0 0 12px rgba(245, 200, 66, 0.3)"
-                    : "none",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {letter}
-              </button>
+              <div key={letter} className="relative inline-block">
+                <button
+                  onClick={() => onSelectVowel(letter)}
+                  disabled={isDisabled}
+                  className={`glass-button w-12 h-12 sm:w-14 sm:h-14 rounded-xl text-lg font-bold transition-all duration-150 select-none hover:scale-110 relative
+                    ${isDisabled ? "opacity-30 cursor-not-allowed" : "active:scale-90"}
+                    ${isSelected ? "active animate-pulse-glow" : ""}
+                  `}
+                  style={{
+                    background: isSelected
+                      ? "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)"
+                      : "rgba(30, 30, 30, 0.4)",
+                    color: isSelected ? "#0a0a0a" : "#e8e8e8",
+                    border: isSelected
+                      ? "2px solid #f5c842"
+                      : "1px solid rgba(255,255,255,0.1)",
+                    backdropFilter: "blur(12px)",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  {letter}
+                </button>
+              </div>
             );
           })}
         </div>

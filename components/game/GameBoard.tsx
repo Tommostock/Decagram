@@ -430,6 +430,7 @@ export function GameBoard() {
               onEnter={handleEnter}
               onBackspace={handleBackspace}
               keyboardStatus={state.keyboardStatus}
+              revealedLetters={[...state.selectedConsonants, state.selectedVowel]}
             />
           </div>
         </>

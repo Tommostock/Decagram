@@ -7,6 +7,7 @@ interface KeyboardProps {
   onEnter: () => void;
   onBackspace: () => void;
   keyboardStatus: Record<string, LetterStatus>;
+  revealedLetters?: string[];
 }
 
 const ROWS = [
@@ -26,6 +27,7 @@ export function Keyboard({
   onEnter,
   onBackspace,
   keyboardStatus,
+  revealedLetters = [],
 }: KeyboardProps) {
   const handleClick = (key: string) => {
     if (key === "ENTER") onEnter();
@@ -40,34 +42,68 @@ export function Keyboard({
           {row.map((key) => {
             const isSpecial = key === "ENTER" || key === "DEL";
             const status = keyboardStatus[key];
-            const bgColor = status ? statusColors[status] : "rgba(50, 50, 50, 0.8)";
+            const isRevealed = revealedLetters.includes(key);
+            const isAbsent = status === "absent";
+
+            let bgColor: string;
+            let opacity: number;
+            let borderColor: string;
+
+            if (status === "correct") {
+              bgColor = statusColors.correct;
+              opacity = 1;
+              borderColor = "#22c55e";
+            } else if (status === "present") {
+              bgColor = statusColors.present;
+              opacity = 1;
+              borderColor = "#eab308";
+            } else if (isAbsent) {
+              // Guessed letter not in word - dark grey
+              bgColor = "rgba(50, 50, 50, 0.8)";
+              opacity = 0.5;
+              borderColor = "rgba(255,255,255,0.05)";
+            } else if (isRevealed) {
+              // Initially revealed letter - lighter grey
+              bgColor = "rgba(80, 80, 80, 0.6)";
+              opacity = 0.6;
+              borderColor = "rgba(255,255,255,0.15)";
+            } else {
+              bgColor = "rgba(50, 50, 50, 0.8)";
+              opacity = 1;
+              borderColor = "rgba(255,255,255,0.1)";
+            }
+
+            const isActive = status === "correct" || status === "present";
+            const isInteractive = !isAbsent && !isRevealed;
 
             return (
-              <button
-                key={key}
-                onClick={() => handleClick(key)}
-                className={`
-                  ${isSpecial ? "px-2.5 sm:px-4 text-[10px] sm:text-xs" : "w-[30px] sm:w-[36px] text-sm sm:text-base"}
-                  h-[42px] sm:h-[50px] rounded-md font-semibold transition-all duration-100
-                  active:scale-90 active:brightness-75 hover:scale-110 hover:brightness-110 select-none
-                `}
-                style={{
-                  backgroundColor: bgColor,
-                  color:
-                    status === "correct" || status === "present"
-                      ? "#fff"
-                      : "#d0d0d0",
-                  border: status === "correct"
-                    ? "2px solid #22c55e"
-                    : status === "present"
-                    ? "2px solid #eab308"
-                    : "1px solid rgba(255,255,255,0.05)",
-                  boxShadow: status ? `inset 0 0 8px ${statusColors[status]}` : "none",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                {key === "DEL" ? "\u232B" : key}
-              </button>
+              <div key={key} className="relative inline-block">
+                <button
+                  onClick={() => handleClick(key)}
+                  className={`glass-button
+                    ${isSpecial ? "px-2.5 sm:px-4 text-[10px] sm:text-xs" : "w-[30px] sm:w-[36px] text-sm sm:text-base"}
+                    h-[42px] sm:h-[50px] rounded-md font-semibold transition-all duration-100 select-none relative
+                    ${isActive ? "active" : ""}
+                    ${isInteractive ? "hover:scale-110 hover:brightness-110 active:scale-90 active:brightness-75" : ""}
+                  `}
+                  style={{
+                    backgroundColor: bgColor,
+                    opacity: opacity,
+                    color:
+                      status === "correct" || status === "present"
+                        ? "#fff"
+                        : status === "absent" || isRevealed
+                          ? "#888"
+                          : "#d0d0d0",
+                    border: `${isRevealed ? "1.5px" : status ? "2px" : "1px"} solid ${borderColor}`,
+                    backdropFilter: "blur(12px)",
+                    boxShadow: status ? `inset 0 0 8px ${statusColors[status]}` : "none",
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  {key === "DEL" ? "\u232B" : key}
+                </button>
+              </div>
             );
           })}
         </div>

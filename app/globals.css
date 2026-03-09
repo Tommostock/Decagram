@@ -61,6 +61,21 @@
     42% { transform: scale(1.15); }
     100% { transform: scale(1); }
   }
+
+  @keyframes rotatingGoldRing {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes filmGrain {
+    0% { background-position: 0 0; }
+    100% { background-position: 256px 256px; }
+  }
+
+  @keyframes radialGlow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.5; }
+  }
 }
 
 html {
@@ -96,4 +111,128 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #2a2a2a;
   border-radius: 2px;
+}
+
+/* Glassmorphic button base styles */
+.glass-button {
+  position: relative;
+  backdrop-filter: blur(12px);
+  background: rgba(30, 30, 30, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+/* Golden active indicator ring - 4 layer system */
+.glass-button.active::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 14px;
+
+  /* Layer 1: Glow - blurred warm gold behind the ring */
+  box-shadow: 0 0 24px rgba(232, 175, 72, 0.15),
+              inset 0 0 24px rgba(232, 175, 72, 0.08);
+
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Layer 2 & 3: Clip container + Rotating conic-gradient ring */
+.glass-button.active::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 14px;
+
+  /* Clip container effect */
+  overflow: hidden;
+  padding: 2px;
+
+  /* Layer 3: Rotating conic gradient - heavily gold-dominant */
+  background: conic-gradient(
+    from 0deg,
+    /* 70% gold tones */
+    #533517 0%,           /* dark bronze start */
+    #6b4920 8%,           /* warm bronze */
+    #8b6f47 16%,          /* medium gold */
+    #a0864a 20%,
+    #c49746 28%,          /* warm gold peak */
+    #d4a958 35%,
+    #feeaa5 42%,          /* light gold peak */
+    #d4a958 48%,
+    #c49746 55%,
+    #a0864a 62%,
+    #8b6f47 68%,
+
+    /* White hotspot #1 ~3% wide */
+    #ffffff 70%,
+    #ffffff 73%,
+
+    /* Pink-blue iridescence hint ~1.5% */
+    #ffc0cb 74.5%,
+    #ffffff 75%,
+
+    /* Blue hint ~1.5% */
+    #add8e6 76.5%,
+    #ffffff 78%,
+
+    /* White hotspot #2 ~3% wide */
+    #ffffff 81%,
+    #ffffff 84%,
+
+    /* Back to golds to complete circle and repeat */
+    #d4a958 86%,
+    #c49746 90%,
+    #a0884a 94%,
+    #8b6f47 96%,
+    #533517 100%
+  );
+
+  background-size: 200% 200%;
+  background-position: -50% -50%;
+  animation: rotatingGoldRing 4.5s linear infinite;
+
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Layer 4: Inner plate - inset covers center, only 2px of ring visible */
+.glass-button.active {
+  position: relative;
+  z-index: 2;
+
+  /* Film grain noise overlay */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.03) 2px,
+      rgba(255, 255, 255, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.02) 2px,
+      rgba(255, 255, 255, 0.02) 4px
+    ),
+    radial-gradient(
+      ellipse at 50% 50%,
+      rgba(232, 175, 72, 0.08) 0%,
+      transparent 70%
+    );
+
+  /* Radial ambient glow */
+  box-shadow:
+    inset 0 0 20px rgba(232, 175, 72, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 30px rgba(232, 175, 72, 0.1);
 }
