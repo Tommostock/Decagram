@@ -13,6 +13,7 @@ interface ResultModalProps {
   guesses: Guess[];
   maxGuesses: number;
   stats: DailyStats;
+  onPlayAgain?: () => void;
 }
 
 export function ResultModal({
@@ -22,6 +23,7 @@ export function ResultModal({
   guesses,
   maxGuesses,
   stats,
+  onPlayAgain,
 }: ResultModalProps) {
   const [visible, setVisible] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -137,16 +139,32 @@ export function ResultModal({
           ))}
         </div>
 
-        {/* Timer */}
-        <div className="pt-1">
-          <CountdownTimer />
-        </div>
-
-        {/* Share button */}
-        <div className="flex justify-center">
-          <GoldenButton onClick={handleShare} size="lg">
-            {copied ? "Copied!" : "Share Result"}
-          </GoldenButton>
+        {/* Buttons */}
+        <div className="flex gap-3 pt-2">
+          {onPlayAgain && (
+            <button
+              onClick={onPlayAgain}
+              className="flex-1 px-4 py-3 rounded-lg font-semibold transition-all duration-200"
+              style={{
+                background: "rgba(80, 80, 80, 0.6)",
+                color: "#e8e8e8",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(100, 100, 100, 0.8)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(80, 80, 80, 0.6)";
+              }}
+            >
+              Play Again
+            </button>
+          )}
+          <div className="flex-1">
+            <GoldenButton onClick={handleShare} size="lg">
+              {copied ? "Copied!" : "Share Result"}
+            </GoldenButton>
+          </div>
         </div>
       </div>
     </div>

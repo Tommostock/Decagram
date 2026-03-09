@@ -32,7 +32,8 @@ type Action =
   | { type: "TYPE_LETTER"; letter: string }
   | { type: "DELETE_LETTER" }
   | { type: "SUBMIT_GUESS"; guess: Guess; newPhase: GamePhase }
-  | { type: "CLEAR_INPUT" };
+  | { type: "CLEAR_INPUT" }
+  | { type: "PLAY_AGAIN"; dailyWord: string };
 
 function reducer(state: GameState, action: Action): GameState {
   switch (action.type) {
@@ -105,6 +106,11 @@ function reducer(state: GameState, action: Action): GameState {
 
     case "CLEAR_INPUT":
       return { ...state, currentInput: "" };
+
+    case "PLAY_AGAIN":
+      return {
+        ...createInitialState(action.dailyWord, state.dateKey),
+      };
 
     default:
       return state;
@@ -311,6 +317,18 @@ export function GameBoard() {
     handleSubmitGuess();
   }, [handleSubmitGuess]);
 
+  // Play again handler - reset game to letter selection
+  const handlePlayAgain = useCallback(() => {
+    dispatch({ type: "PLAY_AGAIN", dailyWord });
+    saveGameState({
+      dateKey,
+      phase: "LETTER_SELECTION",
+      selectedConsonants: [],
+      selectedVowel: "",
+      guesses: [],
+    });
+  }, [dailyWord, dateKey]);
+
   // Don't render until loaded (prevents flash of initial state)
   if (!loaded) {
     return (
@@ -461,6 +479,7 @@ export function GameBoard() {
             guesses={state.guesses}
             maxGuesses={state.maxGuesses}
             stats={stats}
+            onPlayAgain={handlePlayAgain}
           />
         </>
       )}
