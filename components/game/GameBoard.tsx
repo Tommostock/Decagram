@@ -24,6 +24,7 @@ import { GuessHistory } from "./GuessHistory";
 import { Keyboard } from "./Keyboard";
 import { ResultModal } from "./ResultModal";
 import { PauseMenu } from "./PauseMenu";
+import { HintModal } from "./HintModal";
 
 type Action =
   | { type: "RESTORE"; state: GameState }
@@ -139,6 +140,7 @@ export function GameBoard() {
   const [isRevealingWord, setIsRevealingWord] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const submittingRef = useRef(false);
 
   const showToast = useCallback((message: string) => {
@@ -390,7 +392,6 @@ export function GameBoard() {
         <PauseMenu
           onResume={handleResume}
           onStartNewGame={handleStartNewGame}
-          onExit={handleExit}
         />
       )}
 
@@ -427,20 +428,27 @@ export function GameBoard() {
             style={{
               background: "rgba(255, 255, 255, 0.05)",
               border: "1px solid rgba(255, 255, 255, 0.08)",
-              color: "#666",
-              fontSize: "16px",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
-              e.currentTarget.style.color = "#aaa";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
-              e.currentTarget.style.color = "#666";
             }}
             aria-label="Pause"
           >
-            ⏸
+            <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="0.5" y="0.5" width="3.5" height="13" rx="1.5"
+                fill="url(#goldGradPause)" stroke="none" />
+              <rect x="8" y="0.5" width="3.5" height="13" rx="1.5"
+                fill="url(#goldGradPause)" stroke="none" />
+              <defs>
+                <linearGradient id="goldGradPause" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+                  <stop offset="0%" stopColor="#f5c842" />
+                  <stop offset="100%" stopColor="#b8860b" />
+                </linearGradient>
+              </defs>
+            </svg>
           </button>
         ) : (
           <div className="w-8" />
@@ -456,6 +464,7 @@ export function GameBoard() {
             word={state.dailyWord}
             revealedPositions={state.revealedPositions}
             isRevealing={isRevealingWord}
+            guesses={state.guesses}
           />
           {/* Selected letters info */}
           <div className="mt-3 flex justify-center gap-1.5">
@@ -525,8 +534,34 @@ export function GameBoard() {
             <GuessInput currentInput={state.currentInput} shaking={shaking} />
           </div>
 
+          {/* Hint button */}
+          <div className="w-full flex justify-center pt-1">
+            <button
+              onClick={() => setShowHint(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-150 active:scale-95"
+              style={{
+                background: "rgba(245, 200, 66, 0.08)",
+                border: "1px solid rgba(245, 200, 66, 0.2)",
+                color: "#d4a527",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(245, 200, 66, 0.14)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(245, 200, 66, 0.08)";
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M7 6v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="7" cy="4" r="0.75" fill="currentColor" />
+              </svg>
+              Hint
+            </button>
+          </div>
+
           {/* Keyboard */}
-          <div className="w-full pt-2">
+          <div className="w-full pt-1">
             <Keyboard
               onKeyPress={handleKeyPress}
               onEnter={handleEnter}
@@ -536,6 +571,14 @@ export function GameBoard() {
             />
           </div>
         </>
+      )}
+
+      {/* Hint modal */}
+      {showHint && (
+        <HintModal
+          word={state.dailyWord}
+          onClose={() => setShowHint(false)}
+        />
       )}
 
       {/* Reveal phase - show loading while animation plays */}

@@ -2,6 +2,36 @@
 
 import { useTheme } from "@/lib/theme-context";
 
+function SunIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="7.5" cy="7.5" r="3" fill="currentColor" />
+      <line x1="7.5" y1="0.5" x2="7.5" y2="2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="7.5" y1="12.5" x2="7.5" y2="14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="0.5" y1="7.5" x2="2.5" y2="7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="12.5" y1="7.5" x2="14.5" y2="7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="2.55" y1="2.55" x2="3.96" y2="3.96" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="11.04" y1="11.04" x2="12.45" y2="12.45" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="12.45" y1="2.55" x2="11.04" y2="3.96" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="3.96" y1="11.04" x2="2.55" y2="12.45" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M12 9.5C11 11.2 9.1 12.5 7 12.5C4.0 12.5 1.5 10.0 1.5 7.0C1.5 4.9 2.8 3.0 4.5 2.0C2.4 2.8 1 4.8 1 7.0C1 10.3 3.7 13 7 13C9.2 13 11.2 11.6 12 9.5Z"
+        fill="currentColor"
+        stroke="currentColor"
+        strokeWidth="0.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
@@ -9,10 +39,11 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="relative inline-flex items-center justify-center w-12 h-12 rounded-lg transition-all duration-200 active:scale-90"
+      className="w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 active:scale-90"
       style={{
         background: "rgba(255, 255, 255, 0.05)",
         border: "1px solid rgba(255, 255, 255, 0.08)",
+        color: isDark ? "#f5c842" : "#d4a527",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
@@ -21,43 +52,9 @@ export function ThemeToggle() {
         e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
       }}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
-      title={`${isDark ? "Light" : "Dark"} mode`}
+      title={`Switch to ${isDark ? "light" : "dark"} mode`}
     >
-      {/* Toggle background track */}
-      <div
-        className="absolute inset-0 rounded-lg opacity-30"
-        style={{
-          background: isDark
-            ? "rgba(245, 200, 66, 0.1)"
-            : "rgba(100, 150, 200, 0.1)",
-        }}
-      />
-
-      {/* Icons - stacked vertically */}
-      <div className="relative flex flex-col items-center justify-center gap-0.5">
-        {/* Sun icon (light mode) */}
-        <div
-          className="text-xs transition-all duration-200"
-          style={{
-            opacity: isDark ? 0.3 : 1,
-            transform: isDark ? "scale(0.7)" : "scale(1)",
-            color: isDark ? "#666" : "#f5c842",
-          }}
-        >
-          ◯
-        </div>
-        {/* Moon icon (dark mode) */}
-        <div
-          className="text-xs transition-all duration-200"
-          style={{
-            opacity: isDark ? 1 : 0.3,
-            transform: isDark ? "scale(1)" : "scale(0.7)",
-            color: isDark ? "#f5c842" : "#666",
-          }}
-        >
-          ◐
-        </div>
-      </div>
+      {isDark ? <MoonIcon /> : <SunIcon />}
     </button>
   );
 }

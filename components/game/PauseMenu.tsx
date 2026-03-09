@@ -3,10 +3,9 @@
 interface PauseMenuProps {
   onResume: () => void;
   onStartNewGame: () => void;
-  onExit: () => void;
 }
 
-export function PauseMenu({ onResume, onStartNewGame, onExit }: PauseMenuProps) {
+export function PauseMenu({ onResume, onStartNewGame }: PauseMenuProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -52,7 +51,7 @@ export function PauseMenu({ onResume, onStartNewGame, onExit }: PauseMenuProps) 
               "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)";
           }}
         >
-          ▶ Resume
+          Resume
         </button>
 
         {/* Start New Game */}
@@ -71,28 +70,7 @@ export function PauseMenu({ onResume, onStartNewGame, onExit }: PauseMenuProps) 
             e.currentTarget.style.background = "rgba(50, 50, 50, 0.8)";
           }}
         >
-          ↺ Start New Game
-        </button>
-
-        {/* Exit */}
-        <button
-          onClick={onExit}
-          className="w-full px-4 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 active:scale-95"
-          style={{
-            background: "rgba(30, 30, 30, 0.6)",
-            color: "#888",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(50, 50, 50, 0.7)";
-            e.currentTarget.style.color = "#aaa";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(30, 30, 30, 0.6)";
-            e.currentTarget.style.color = "#888";
-          }}
-        >
-          ✕ Exit to Main Menu
+          Start New Game
         </button>
       </div>
     </div>

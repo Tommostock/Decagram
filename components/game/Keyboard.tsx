@@ -36,9 +36,9 @@ export function Keyboard({
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto space-y-1.5">
+    <div className="w-full max-w-lg mx-auto space-y-[3px] sm:space-y-1.5">
       {ROWS.map((row, rowIdx) => (
-        <div key={rowIdx} className="flex justify-center gap-1">
+        <div key={rowIdx} className="flex justify-center gap-[2px] sm:gap-1">
           {row.map((key) => {
             const isSpecial = key === "ENTER" || key === "DEL";
             const status = keyboardStatus[key];
@@ -81,8 +81,8 @@ export function Keyboard({
                 <button
                   onClick={() => handleClick(key)}
                   className={`glass-button
-                    ${isSpecial ? "px-2.5 sm:px-4 text-[10px] sm:text-xs" : "w-[30px] sm:w-[36px] text-sm sm:text-base"}
-                    h-[42px] sm:h-[50px] rounded-md font-semibold transition-all duration-100 select-none relative
+                    ${isSpecial ? "px-2 sm:px-4 text-[10px] sm:text-xs" : "w-[32px] sm:w-[36px] text-[13px] sm:text-base"}
+                    h-[48px] sm:h-[52px] rounded-md font-semibold transition-all duration-100 select-none relative
                     ${isActive ? "active" : ""}
                     ${isInteractive ? "hover:scale-110 hover:brightness-110 active:scale-90 active:brightness-75" : ""}
                   `}
