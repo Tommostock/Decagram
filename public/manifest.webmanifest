@@ -1,0 +1,25 @@
+{
+  "name": "Decagram \u2014 Daily 10-Letter Word Puzzle",
+  "short_name": "Decagram",
+  "description": "Guess the 10-letter word in 3 tries. A new puzzle every day.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["games", "entertainment"]
+}
