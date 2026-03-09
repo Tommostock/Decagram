@@ -3,9 +3,9 @@
   "configurations": [
     {
       "name": "Node http-server (Port 3000)",
-      "runtimeExecutable": "cmd.exe",
-      "runtimeArgs": ["/c", "npm", "run", "dev"],
-      "cwd": "C:/Users/Tom/Desktop/Apps I Built/Decagram"
+      "runtimeExecutable": "C:/Windows/System32/cmd.exe",
+      "runtimeArgs": ["/c", "cd /d \"C:/Users/Tom/Desktop/Apps I Built/Decagram\" && npm run dev"],
+      "port": 3000
     }
   ]
 }

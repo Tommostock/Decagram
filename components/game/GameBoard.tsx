@@ -22,6 +22,7 @@ import { GuessInput } from "./GuessInput";
 import { GuessHistory } from "./GuessHistory";
 import { Keyboard } from "./Keyboard";
 import { ResultModal } from "./ResultModal";
+import { PauseMenu } from "./PauseMenu";
 
 type Action =
   | { type: "RESTORE"; state: GameState }
@@ -119,12 +120,15 @@ function reducer(state: GameState, action: Action): GameState {
 
 export function GameBoard() {
   const dateKey = getTodayKey();
-  const dailyWord = getDailyWord(dateKey);
+
+  // gameOffset allows generating fresh words beyond the daily word (in-memory only)
+  const [gameOffset, setGameOffset] = useState(0);
+  const activeWord = getDailyWord(gameOffset === 0 ? dateKey : `${dateKey}-${gameOffset}`);
 
   const [state, dispatch] = useReducer(
     reducer,
     null,
-    () => createInitialState(dailyWord, dateKey)
+    () => createInitialState(activeWord, dateKey)
   );
 
   const [stats, setStats] = useState<DailyStats>(() => loadStats());
@@ -133,6 +137,7 @@ export function GameBoard() {
   const [revealingGuessIdx, setRevealingGuessIdx] = useState<number | null>(null);
   const [isRevealingWord, setIsRevealingWord] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const submittingRef = useRef(false);
 
   const showToast = useCallback((message: string) => {
@@ -150,13 +155,13 @@ export function GameBoard() {
     // In production, change to: if (saved && saved.dateKey === dateKey) {
     if (saved) {
       const restoredState: GameState = {
-        ...createInitialState(dailyWord, dateKey),
+        ...createInitialState(activeWord, dateKey),
         phase: saved.phase,
         selectedConsonants: saved.selectedConsonants,
         selectedVowel: saved.selectedVowel,
         guesses: saved.guesses,
         revealedPositions: calculateRevealedPositions(
-          dailyWord,
+          activeWord,
           saved.selectedConsonants,
           saved.selectedVowel
         ),
@@ -176,7 +181,7 @@ export function GameBoard() {
       dispatch({ type: "RESTORE", state: restoredState });
     }
     setLoaded(true);
-  }, [dateKey, dailyWord]);
+  }, [dateKey, activeWord]);
 
   // Persist state changes
   useEffect(() => {
@@ -317,9 +322,9 @@ export function GameBoard() {
     handleSubmitGuess();
   }, [handleSubmitGuess]);
 
-  // Play again handler - reset game to letter selection
+  // Play again handler - reset game to letter selection (same active word)
   const handlePlayAgain = useCallback(() => {
-    dispatch({ type: "PLAY_AGAIN", dailyWord });
+    dispatch({ type: "PLAY_AGAIN", dailyWord: activeWord });
     saveGameState({
       dateKey,
       phase: "LETTER_SELECTION",
@@ -327,7 +332,39 @@ export function GameBoard() {
       selectedVowel: "",
       guesses: [],
     });
-  }, [dailyWord, dateKey]);
+  }, [activeWord, dateKey]);
+
+  // Pause menu handlers
+  const handleResume = useCallback(() => {
+    setIsPaused(false);
+  }, []);
+
+  const handleStartNewGame = useCallback(() => {
+    const newOffset = gameOffset + 1;
+    setGameOffset(newOffset);
+    const newWord = getDailyWord(`${dateKey}-${newOffset}`);
+    dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
+    saveGameState({
+      dateKey,
+      phase: "LETTER_SELECTION",
+      selectedConsonants: [],
+      selectedVowel: "",
+      guesses: [],
+    });
+    setIsPaused(false);
+  }, [gameOffset, dateKey]);
+
+  const handleExit = useCallback(() => {
+    dispatch({ type: "PLAY_AGAIN", dailyWord: activeWord });
+    saveGameState({
+      dateKey,
+      phase: "LETTER_SELECTION",
+      selectedConsonants: [],
+      selectedVowel: "",
+      guesses: [],
+    });
+    setIsPaused(false);
+  }, [activeWord, dateKey]);
 
   // Don't render until loaded (prevents flash of initial state)
   if (!loaded) {
@@ -343,24 +380,64 @@ export function GameBoard() {
 
   const isGameOver = state.phase === "WIN" || state.phase === "LOSE";
 
+  const canPause = state.phase === "REVEAL" || state.phase === "GUESSING";
+
   return (
     <div className="w-full max-w-lg mx-auto flex flex-col items-center gap-4">
+      {/* Pause menu overlay */}
+      {isPaused && (
+        <PauseMenu
+          onResume={handleResume}
+          onStartNewGame={handleStartNewGame}
+          onExit={handleExit}
+        />
+      )}
+
       {/* Header */}
-      <header className="text-center mb-2">
-        <h1
-          className="text-3xl sm:text-4xl font-black tracking-widest"
-          style={{
-            background: "linear-gradient(135deg, #f5c842 0%, #d4a527 50%, #b8860b 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
-          DECAGRAM
-        </h1>
-        <p className="text-xs text-[#666] tracking-wider mt-0.5">
-          DAILY 10-LETTER PUZZLE
-        </p>
+      <header className="w-full flex items-center justify-between mb-2 px-1">
+        <div className="w-8" />
+        <div className="text-center">
+          <h1
+            className="text-3xl sm:text-4xl font-black tracking-widest"
+            style={{
+              background: "linear-gradient(135deg, #f5c842 0%, #d4a527 50%, #b8860b 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            DECAGRAM
+          </h1>
+          <p className="text-xs text-[#666] tracking-wider mt-0.5">
+            DAILY 10-LETTER PUZZLE
+          </p>
+        </div>
+        {/* Pause button — only visible when game is active */}
+        {canPause ? (
+          <button
+            onClick={() => setIsPaused(true)}
+            className="w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 active:scale-90"
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              color: "#666",
+              fontSize: "16px",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+              e.currentTarget.style.color = "#aaa";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+              e.currentTarget.style.color = "#666";
+            }}
+            aria-label="Pause"
+          >
+            ⏸
+          </button>
+        ) : (
+          <div className="w-8" />
+        )}
       </header>
 
       {/* Word display (visible during reveal and guessing phases) */}
