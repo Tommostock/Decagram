@@ -9,6 +9,8 @@ interface WordDisplayProps {
   revealedPositions: number[];
   isRevealing: boolean;
   guesses?: Guess[];
+  revealAll?: boolean;
+  isRevealingAnswer?: boolean;
 }
 
 export function WordDisplay({
@@ -16,6 +18,8 @@ export function WordDisplay({
   revealedPositions,
   isRevealing,
   guesses = [],
+  revealAll = false,
+  isRevealingAnswer = false,
 }: WordDisplayProps) {
   const revealedSet = new Set(revealedPositions);
 
@@ -35,16 +39,19 @@ export function WordDisplay({
         const isInitialReveal = revealedSet.has(i);
         const correctGuessLetter = correctGuessMap.get(i);
 
-        // Priority: initially revealed > correctly guessed > empty
+        // Priority: initially revealed > correctly guessed > reveal-all > empty
+        const isNewlyRevealed = revealAll && !isInitialReveal && !correctGuessLetter;
         const letter = isInitialReveal
           ? word[i]
-          : correctGuessLetter ?? undefined;
+          : correctGuessLetter ?? (revealAll ? word[i] : undefined);
 
         const status: "revealed" | "correct" | "empty" = isInitialReveal
           ? "revealed"
           : correctGuessLetter
             ? "correct"
-            : "empty";
+            : isNewlyRevealed
+              ? "revealed"
+              : "empty";
 
         return (
           <LetterTile
@@ -52,7 +59,7 @@ export function WordDisplay({
             letter={letter}
             status={status}
             delay={i * 150}
-            isRevealing={isRevealing && isInitialReveal}
+            isRevealing={(isRevealing && isInitialReveal) || (isNewlyRevealed && isRevealingAnswer)}
           />
         );
       })}

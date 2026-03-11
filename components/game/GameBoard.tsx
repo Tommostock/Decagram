@@ -152,6 +152,8 @@ export function GameBoard() {
   const [isPaused, setIsPaused] = useState(false);
   const [showResultModal, setShowResultModal] = useState(true);
   const [showHint, setShowHint] = useState(false);
+  const [revealAllLetters, setRevealAllLetters] = useState(false);
+  const [isRevealingAnswer, setIsRevealingAnswer] = useState(false);
   const submittingRef = useRef(false);
 
   const showToast = useCallback((message: string) => {
@@ -368,7 +370,14 @@ export function GameBoard() {
     saveStats(newStats);
     dispatch({ type: "GIVE_UP" });
     setIsPaused(false);
-    setShowResultModal(true);
+    // Reveal all letters on the board with animation, then show the result modal
+    setRevealAllLetters(true);
+    setIsRevealingAnswer(true);
+    const totalDelay = WORD_LENGTH * 150 + 700;
+    setTimeout(() => {
+      setIsRevealingAnswer(false);
+      setShowResultModal(true);
+    }, totalDelay);
   }, [stats, dateKey]);
 
   const handleStartNewGame = useCallback(() => {
@@ -401,7 +410,7 @@ export function GameBoard() {
 
   const isGameOver = state.phase === "WIN" || state.phase === "LOSE";
 
-  const canPause = state.phase === "REVEAL" || state.phase === "GUESSING";
+  const canPause = state.phase === "REVEAL" || state.phase === "GUESSING" || (isGameOver && !showResultModal);
 
   return (
     <div className={`w-full max-w-lg mx-auto flex flex-col items-center gap-4 ${state.phase === "GUESSING" ? "pb-[250px] sm:pb-0" : ""}`}>
@@ -411,6 +420,7 @@ export function GameBoard() {
           onResume={handleResume}
           onStartNewGame={handleStartNewGame}
           onRevealAnswer={handleRevealAnswer}
+          isGameOver={isGameOver}
         />
       )}
 
@@ -440,16 +450,26 @@ export function GameBoard() {
           </p>
           <p className="text-[10px] tracking-wider mt-1.5 flex items-center justify-center gap-1">
             <span style={{ color: "var(--theme-secondary-text, #888)" }}>Made by</span>
-            <span
+            <a
+              href="https://www.youtube.com/spektator"
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
                 fontFamily: '"True Lies", cursive',
                 color: "#D22223",
                 fontSize: "12px",
                 fontWeight: "bold",
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.textDecoration = "underline";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.textDecoration = "none";
               }}
             >
               Spektator
-            </span>
+            </a>
           </p>
         </div>
         {/* Pause button — only visible when game is active */}
@@ -497,6 +517,8 @@ export function GameBoard() {
             revealedPositions={state.revealedPositions}
             isRevealing={isRevealingWord}
             guesses={state.guesses}
+            revealAll={revealAllLetters}
+            isRevealingAnswer={isRevealingAnswer}
           />
           {/* Selected letters info */}
           <div className="mt-3 flex justify-center gap-1.5">
