@@ -95,9 +95,11 @@ export function Keyboard({
                     backdropFilter: "blur(12px)",
                     boxShadow: isRevealed
                       ? `inset 0 0 8px ${statusColors.correct}`
-                      : status
-                        ? `inset 0 0 8px ${statusColors[status]}`
-                        : "none",
+                      : status === "present"
+                        ? `0 0 12px rgba(204, 141, 0, 0.6)`
+                        : status
+                          ? `inset 0 0 8px ${statusColors[status]}`
+                          : "none",
                     transition: "all 0.15s ease",
                   }}
                 >
