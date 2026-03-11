@@ -58,7 +58,7 @@ export function LetterPicker({
                     background: isSelected
                       ? "linear-gradient(135deg, #f5c842 0%, rgba(184, 134, 11, 0.8) 100%)"
                       : "var(--bg-subtle)",
-                    color: isSelected ? "#f5c842" : "var(--text-primary)",
+                    color: isSelected ? "#0a0a0a" : "var(--text-primary)",
                     border: isSelected
                       ? "2px solid #f5c842"
                       : "1px solid var(--border-light)",
@@ -97,7 +97,7 @@ export function LetterPicker({
                     background: isSelected
                       ? "linear-gradient(135deg, #f5c842 0%, rgba(184, 134, 11, 0.8) 100%)"
                       : "var(--bg-subtle)",
-                    color: isSelected ? "#f5c842" : "var(--text-primary)",
+                    color: isSelected ? "#0a0a0a" : "var(--text-primary)",
                     border: isSelected
                       ? "2px solid #f5c842"
                       : "1px solid var(--border-light)",
