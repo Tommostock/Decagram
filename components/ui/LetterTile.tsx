@@ -17,7 +17,7 @@ const statusColors: Record<string, { bg: string; border: string }> = {
   absent: { bg: "#374151", border: "#4b5563" },
   unknown: { bg: "transparent", border: "#3a3a3a" },
   empty: { bg: "transparent", border: "#2a2a2a" },
-  revealed: { bg: "rgba(245, 200, 66, 0.15)", border: "#f5c842" },
+  revealed: { bg: "#22c55e", border: "#16a34a" },
 };
 
 export function LetterTile({
@@ -75,7 +75,7 @@ export function LetterTile({
               borderColor: backColors.border,
               transform: "rotateX(180deg)",
               backfaceVisibility: "hidden",
-              color: status === "revealed" ? "#f5c842" : "#fff",
+              color: "#fff",
             }}
           >
             {letter?.toUpperCase()}
@@ -92,19 +92,17 @@ export function LetterTile({
     <div className="relative inline-block">
       <div
         className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold transition-all duration-200 select-none
-          ${isCorrect ? "animate-heartbeat" : ""}
+          ${isCorrect || isRevealed ? "animate-heartbeat" : ""}
         `}
         style={{
           backgroundColor: colors.bg,
           borderColor: colors.border,
           color:
-            status === "revealed"
-              ? "#f5c842"
-              : status === "empty" || status === "unknown"
-                ? "#e8e8e8"
-                : "#fff",
+            status === "empty" || status === "unknown"
+              ? "#e8e8e8"
+              : "#fff",
           transform: letter && !flipped ? "scale(1)" : undefined,
-          boxShadow: isCorrect ? "0 0 12px rgba(34, 197, 94, 0.5)" : "none",
+          boxShadow: isCorrect || isRevealed ? "0 0 12px rgba(34, 197, 94, 0.5)" : "none",
           backdropFilter: "blur(8px)",
           background: colors.bg === "transparent"
             ? "rgba(20, 20, 20, 0.3)"

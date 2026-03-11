@@ -14,6 +14,7 @@ interface ResultModalProps {
   maxGuesses: number;
   stats: DailyStats;
   onPlayAgain?: () => void;
+  onClose?: () => void;
 }
 
 export function ResultModal({
@@ -24,6 +25,7 @@ export function ResultModal({
   maxGuesses,
   stats,
   onPlayAgain,
+  onClose,
 }: ResultModalProps) {
   const [visible, setVisible] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -66,7 +68,23 @@ export function ResultModal({
         }}
       >
         {/* Title */}
-        <div className="text-center">
+        <div className="relative text-center">
+          {won && onClose && (
+            <button
+              onClick={onClose}
+              className="absolute right-0 top-0 w-7 h-7 flex items-center justify-center rounded-lg transition-all duration-150 active:scale-90"
+              style={{
+                color: "#666",
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.06)",
+              }}
+              aria-label="Close"
+            >
+              <svg width="10" height="10" viewBox="0 0 8 8" fill="none">
+                <path d="M1 1l6 6M7 1L1 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
+          )}
           <p className="text-2xl font-bold mb-1">
             {won ? "Brilliant!" : "So Close!"}
           </p>
