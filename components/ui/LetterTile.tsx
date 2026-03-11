@@ -75,7 +75,7 @@ export function LetterTile({
               borderColor: backColors.border,
               transform: "rotateX(180deg)",
               backfaceVisibility: "hidden",
-              color: "#fff",
+              color: status === "present" ? "#2a2a2a" : "#fff",
             }}
           >
             {letter?.toUpperCase()}
@@ -100,6 +100,8 @@ export function LetterTile({
           color:
             status === "empty" || status === "unknown"
               ? "#e8e8e8"
+              : status === "present"
+              ? "#2a2a2a"
               : "#fff",
           transform: letter && !flipped ? "scale(1)" : undefined,
           boxShadow: isCorrect ? "0 0 12px rgba(34, 197, 94, 0.5)" : isRevealed ? "0 0 12px rgba(34, 197, 94, 0.5)" : "none",
