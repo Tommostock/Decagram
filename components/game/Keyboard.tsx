@@ -36,9 +36,9 @@ export function Keyboard({
   };
 
   return (
-    <div className="w-full sm:max-w-lg sm:mx-auto space-y-[3px] sm:space-y-1.5">
+    <div className="w-full max-w-md mx-auto space-y-1">
       {ROWS.map((row, rowIdx) => (
-        <div key={rowIdx} className="flex gap-[3px] sm:justify-center sm:gap-1">
+        <div key={rowIdx} className="flex gap-1 justify-center">
           {row.map((key) => {
             const isSpecial = key === "ENTER" || key === "DEL";
             const status = keyboardStatus[key];
@@ -73,14 +73,12 @@ export function Keyboard({
             const isInteractive = !isAbsent;
 
             return (
-              <div key={key} className={`relative ${isSpecial ? "flex-[1.5] sm:flex-none" : "flex-1 sm:flex-none"}`}>
+              <div key={key} className={`relative ${isSpecial ? "flex-[1.2]" : "flex-1"}`}>
                 <button
                   onClick={() => handleClick(key)}
-                  className={`glass-button w-full
-                    ${isSpecial ? "sm:w-auto sm:px-4 text-[11px] sm:text-xs" : "sm:w-[36px] text-[16px] sm:text-base"}
-                    h-[44px] sm:h-[52px] rounded-md font-semibold transition-all duration-100 select-none relative
+                  className={`glass-button w-full h-10 text-xs rounded-lg font-semibold transition-all duration-100 select-none relative
                     ${isActive ? "active" : ""}
-                    ${isInteractive ? "hover:scale-110 hover:brightness-110 active:scale-90 active:brightness-75" : ""}
+                    ${isInteractive ? "hover:scale-105 hover:brightness-110 active:scale-95 active:brightness-75" : ""}
                   `}
                   style={{
                     backgroundColor: bgColor,
