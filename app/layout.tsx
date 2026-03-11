@@ -58,6 +58,7 @@ export default function RootLayout({
             --bg-keyboard-dock: rgba(10, 10, 10, 0.97);
             --border-keyboard-dock: rgba(255, 255, 255, 0.06);
             --text-key: #d0d0d0;
+            --color-gold: #f5c842;
           }
           html[data-theme="light"] {
             --bg-glass: rgba(255, 255, 255, 0.85);
@@ -72,6 +73,7 @@ export default function RootLayout({
             --bg-keyboard-dock: rgba(240, 240, 240, 0.97);
             --border-keyboard-dock: rgba(0, 0, 0, 0.1);
             --text-key: #333;
+            --color-gold: #b8860b;
           }
           /* Light mode overrides — background/border/color on elements using inline styles */
           html[data-theme="light"] .glass-button {

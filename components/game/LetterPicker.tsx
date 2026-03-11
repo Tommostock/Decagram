@@ -27,8 +27,8 @@ export function LetterPicker({
       {/* Instructions */}
       <div className="text-center space-y-1">
         <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-          Choose <span className="text-[#f5c842] font-semibold">{REQUIRED_CONSONANTS} consonants</span> and{" "}
-          <span className="text-[#f5c842] font-semibold">{REQUIRED_VOWELS} vowel</span>
+          Choose <span style={{ color: "var(--color-gold)", fontWeight: "600" }}>{REQUIRED_CONSONANTS} consonants</span> and{" "}
+          <span style={{ color: "var(--color-gold)", fontWeight: "600" }}>{REQUIRED_VOWELS} vowel</span>
         </p>
         <p className="text-xs" style={{ color: "var(--text-muted)" }}>
           These letters will be revealed in the hidden word
@@ -56,11 +56,11 @@ export function LetterPicker({
                   `}
                   style={{
                     background: isSelected
-                      ? "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)"
+                      ? "linear-gradient(135deg, var(--color-gold) 0%, rgba(184, 134, 11, 0.8) 100%)"
                       : "var(--bg-subtle)",
                     color: isSelected ? "#0a0a0a" : "var(--text-primary)",
                     border: isSelected
-                      ? "2px solid #f5c842"
+                      ? "2px solid var(--color-gold)"
                       : "1px solid var(--border-light)",
                     backdropFilter: "blur(12px)",
                     transition: "all 0.2s ease",
@@ -95,11 +95,11 @@ export function LetterPicker({
                   `}
                   style={{
                     background: isSelected
-                      ? "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)"
+                      ? "linear-gradient(135deg, var(--color-gold) 0%, rgba(184, 134, 11, 0.8) 100%)"
                       : "var(--bg-subtle)",
                     color: isSelected ? "#0a0a0a" : "var(--text-primary)",
                     border: isSelected
-                      ? "2px solid #f5c842"
+                      ? "2px solid var(--color-gold)"
                       : "1px solid var(--border-light)",
                     backdropFilter: "blur(12px)",
                     transition: "all 0.2s ease",
