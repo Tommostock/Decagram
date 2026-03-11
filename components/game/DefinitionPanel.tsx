@@ -83,15 +83,21 @@ function getWordVariants(word: string): string[] {
   return variants;
 }
 
-// Only block the definition if it contains the EXACT target word.
-// Allowing stem forms to appear is fine — seeing "retrieve" doesn't give away "RETRIEVING".
+// Block definitions that contain the target word OR any of its base/stem forms.
+// e.g. a definition for "RETRIEVING" must not mention "retrieve", "retriev", etc.
 function definitionRevealsTword(definition: string, targetWord: string): boolean {
   const target = targetWord.toLowerCase();
   if (target.length < 4) return false;
-  return new RegExp(
-    `\\b${target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
-    "i"
-  ).test(definition);
+
+  // Reuse getWordVariants to get the target word + all its stems
+  const formsToBlock = getWordVariants(target).filter((f) => f.length >= 4);
+
+  return formsToBlock.some((form) =>
+    new RegExp(
+      `\\b${form.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
+      "i"
+    ).test(definition)
+  );
 }
 
 interface DefinitionPanelProps {
