@@ -16,7 +16,6 @@ import { loadGameState, saveGameState, loadStats, saveStats } from "@/lib/storag
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { GoldenButton } from "@/components/ui/GoldenButton";
 import { Toast } from "@/components/ui/Toast";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LetterPicker } from "./LetterPicker";
 import { WordDisplay } from "./WordDisplay";
 import { GuessInput } from "./GuessInput";
@@ -430,9 +429,7 @@ export function GameBoard() {
       )}
 
       {/* Header */}
-      <header className="w-full flex items-center justify-between mb-2 px-1">
-        {/* Theme toggle — always visible */}
-        <ThemeToggle />
+      <header className="w-full flex items-center justify-center mb-2 px-1">
         <div className="text-center">
           <h1
             className="text-3xl sm:text-4xl font-black tracking-widest"
