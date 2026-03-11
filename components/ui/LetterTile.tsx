@@ -14,7 +14,7 @@ interface LetterTileProps {
 // tile status color map
 const statusColors: Record<string, { bg: string; border: string }> = {
   correct: { bg: "#22c55e", border: "#16a34a" },
-  present: { bg: "#cc8d00", border: "#8b6009" },
+  present: { bg: "#ff9500", border: "#ff7b00" },
   absent: { bg: "#374151", border: "#4b5563" },
   unknown: { bg: "transparent", border: "#3a3a3a" },
   empty: { bg: "transparent", border: "#2a2a2a" },
@@ -77,7 +77,7 @@ export function LetterTile({
               transform: "rotateX(180deg)",
               backfaceVisibility: "hidden",
               color: status === "present" ? "#2a2a2a" : "#fff",
-              boxShadow: status === "present" ? "0 0 12px rgba(204, 141, 0, 0.6)" : undefined,
+              boxShadow: status === "present" ? "0 0 12px rgba(255, 149, 0, 0.6)" : undefined,
             }}
           >
             {letter?.toUpperCase()}
@@ -109,7 +109,7 @@ export function LetterTile({
           boxShadow: isCorrect || isRevealed
             ? "0 0 12px rgba(34, 197, 94, 0.5)"
             : status === "present"
-            ? "0 0 12px rgba(204, 141, 0, 0.6)"
+            ? "0 0 12px rgba(255, 149, 0, 0.6)"
             : "none",
           backdropFilter: "blur(8px)",
           background: colors.bg === "transparent"
