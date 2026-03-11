@@ -69,7 +69,7 @@ export function ResultModal({
       >
         {/* Title */}
         <div className="relative text-center">
-          {won && onClose && (
+          {onClose && (
             <button
               onClick={onClose}
               className="absolute right-0 top-0 w-7 h-7 flex items-center justify-center rounded-lg transition-all duration-150 active:scale-90"

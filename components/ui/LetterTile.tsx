@@ -92,7 +92,7 @@ export function LetterTile({
     <div className="relative inline-block">
       <div
         className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold transition-all duration-200 select-none
-          ${isCorrect || isRevealed ? "animate-heartbeat" : ""}
+          ${isCorrect ? "animate-heartbeat" : ""}
         `}
         style={{
           backgroundColor: colors.bg,
