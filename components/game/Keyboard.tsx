@@ -17,7 +17,7 @@ const ROWS = [
 ];
 
 const statusColors: Record<string, string> = {
-  correct: "#14b8a6",
+  correct: "#22c55e",
   present: "#facc15",
   absent: "#2a2a2a",
 };
@@ -53,7 +53,7 @@ export function Keyboard({
             if (isRevealed || status === "correct") {
               bgColor = statusColors.correct;
               opacity = 1;
-              borderColor = "#14b8a6";
+              borderColor = "#22c55e";
             } else if (status === "present") {
               bgColor = statusColors.present;
               opacity = 1;

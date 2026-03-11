@@ -145,7 +145,7 @@ export function ResultModal({
                     width: `${Math.max((count / maxDist) * 100, count > 0 ? 12 : 4)}%`,
                     background:
                       won && guesses.length === i + 1
-                        ? "#14b8a6"
+                        ? "#22c55e"
                         : "var(--bg-key)",
                     color: "#fff",
                   }}

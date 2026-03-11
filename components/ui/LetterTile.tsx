@@ -12,7 +12,7 @@ interface LetterTileProps {
 }
 
 const statusColors: Record<string, { bg: string; border: string }> = {
-  correct: { bg: "#14b8a6", border: "#0d9488" },
+  correct: { bg: "#22c55e", border: "#16a34a" },
   present: { bg: "#facc15", border: "#ca8a04" },
   absent: { bg: "#374151", border: "#4b5563" },
   unknown: { bg: "transparent", border: "#3a3a3a" },
@@ -102,7 +102,7 @@ export function LetterTile({
               ? "#e8e8e8"
               : "#fff",
           transform: letter && !flipped ? "scale(1)" : undefined,
-          boxShadow: isCorrect ? "0 0 12px rgba(20, 184, 166, 0.5)" : isRevealed ? "0 0 12px rgba(34, 197, 94, 0.5)" : "none",
+          boxShadow: isCorrect ? "0 0 12px rgba(34, 197, 94, 0.5)" : isRevealed ? "0 0 12px rgba(34, 197, 94, 0.5)" : "none",
           backdropFilter: "blur(8px)",
           background: colors.bg === "transparent"
             ? "var(--bg-tile-empty)"
