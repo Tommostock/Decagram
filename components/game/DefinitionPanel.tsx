@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import staticDefs from "@/data/word-definitions.json";
 
 interface DictDefinition {
   partOfSpeech: string;
   definition: string;
 }
 
+// Generates candidate lookup forms from a 10-letter inflected/derived word.
+// The API is tried in order — first match with a usable definition wins.
 function getWordVariants(word: string): string[] {
   const w = word.toLowerCase();
   const seen = new Set<string>([w]);
@@ -19,16 +22,19 @@ function getWordVariants(word: string): string[] {
     }
   };
 
+  // -ly / -ily adverbs
   if (w.endsWith("ly")) {
     add(w.slice(0, -2));
     if (w.endsWith("ily")) add(w.slice(0, -3) + "y");
   }
+  // -ing present participles
   if (w.endsWith("ing")) {
     const stem = w.slice(0, -3);
     add(stem);
     add(stem + "e");
     if (stem.length >= 2 && stem.at(-1) === stem.at(-2)) add(stem.slice(0, -1));
   }
+  // -ed past tenses
   if (w.endsWith("ed")) {
     const stem = w.slice(0, -2);
     add(stem);
@@ -36,6 +42,7 @@ function getWordVariants(word: string): string[] {
     add(w.slice(0, -1));
     if (stem.length >= 2 && stem.at(-1) === stem.at(-2)) add(stem.slice(0, -1));
   }
+  // plurals / third-person -s
   if (w.endsWith("ies")) add(w.slice(0, -3) + "y");
   if (w.endsWith("es") && !w.endsWith("ies")) {
     add(w.slice(0, -2));
@@ -43,29 +50,48 @@ function getWordVariants(word: string): string[] {
   } else if (w.endsWith("s") && !w.endsWith("ss") && !w.endsWith("es")) {
     add(w.slice(0, -1));
   }
+  // noun/verb suffixes
   if (w.endsWith("ation")) { add(w.slice(0, -5)); add(w.slice(0, -5) + "e"); }
   if (w.endsWith("tion") && !w.endsWith("ation")) { add(w.slice(0, -4)); add(w.slice(0, -3) + "e"); }
   if (w.endsWith("ance")) { add(w.slice(0, -4)); add(w.slice(0, -4) + "e"); }
   if (w.endsWith("ence")) { add(w.slice(0, -4)); add(w.slice(0, -4) + "e"); }
   if (w.endsWith("able")) { add(w.slice(0, -4)); add(w.slice(0, -4) + "e"); }
   if (w.endsWith("ible")) { add(w.slice(0, -4)); add(w.slice(0, -4) + "e"); }
-  if (w.endsWith("al")) { add(w.slice(0, -2)); add(w.slice(0, -2) + "e"); }
   if (w.endsWith("ment")) { add(w.slice(0, -4)); add(w.slice(0, -4) + "e"); }
-  if (w.endsWith("ness")) { add(w.slice(0, -4)); if (w.endsWith("iness")) add(w.slice(0, -5) + "y"); }
+  if (w.endsWith("ness")) { add(w.slice(0, -4)); }
+  if (w.endsWith("iness")) add(w.slice(0, -5) + "y");
+  // -ical / -al adjectives
+  if (w.endsWith("ical")) { add(w.slice(0, -4)); add(w.slice(0, -4) + "y"); }
+  else if (w.endsWith("al") && w.length > 5) { add(w.slice(0, -2)); add(w.slice(0, -2) + "e"); }
+  // -ator agent nouns (alternator → alternate)
+  if (w.endsWith("ator")) { add(w.slice(0, -2)); add(w.slice(0, -2) + "e"); }
+  // -ive adjectives (aggressive → aggress, attractive → attract)
+  if (w.endsWith("ive")) { add(w.slice(0, -3)); add(w.slice(0, -3) + "e"); }
+  // -ism (alcoholism → alcohol)
+  if (w.endsWith("ism")) add(w.slice(0, -3));
+  // -ist (antagonist → antagonize)
+  if (w.endsWith("ist")) { add(w.slice(0, -3)); add(w.slice(0, -3) + "ize"); }
+  // -iser / -izer agent nouns (advertiser → advertise)
+  if (w.endsWith("iser") || w.endsWith("izer")) { add(w.slice(0, -2)); add(w.slice(0, -2) + "e"); }
+  // -ier comparative (carrier → carry)
+  if (w.endsWith("ier") && w.length > 6) add(w.slice(0, -3) + "y");
+  // -atory (celebratory → celebrate)
+  if (w.endsWith("atory")) { add(w.slice(0, -5)); add(w.slice(0, -5) + "e"); }
+  // -ory (ambulatory handled above; others like sensory → sense)
+  else if (w.endsWith("ory") && w.length > 7) { add(w.slice(0, -3)); add(w.slice(0, -3) + "e"); }
 
   return variants;
 }
 
-function definitionRevealsTword(definition: string, targetWord: string, variants: string[]): boolean {
-  const defLower = definition.toLowerCase();
-  const allForms = [targetWord.toLowerCase(), ...variants];
-  for (const form of allForms) {
-    if (form.length < 4) continue;
-    if (new RegExp(`\\b${form.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i').test(defLower)) {
-      return true;
-    }
-  }
-  return false;
+// Only block the definition if it contains the EXACT target word.
+// Allowing stem forms to appear is fine — seeing "retrieve" doesn't give away "RETRIEVING".
+function definitionRevealsTword(definition: string, targetWord: string): boolean {
+  const target = targetWord.toLowerCase();
+  if (target.length < 4) return false;
+  return new RegExp(
+    `\\b${target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
+    "i"
+  ).test(definition);
 }
 
 interface DefinitionPanelProps {
@@ -85,6 +111,7 @@ export function DefinitionPanel({ word }: DefinitionPanelProps) {
     const fetchDefinition = async () => {
       const variants = getWordVariants(word);
 
+      // Try the Free Dictionary API for each variant
       for (const variant of variants) {
         try {
           const res = await fetch(
@@ -98,7 +125,7 @@ export function DefinitionPanel({ word }: DefinitionPanelProps) {
             for (const meaning of entry.meanings) {
               for (const def of meaning.definitions) {
                 if (defs.length >= 3) break;
-                if (definitionRevealsTword(def.definition, word, variants)) continue;
+                if (definitionRevealsTword(def.definition, word)) continue;
                 defs.push({
                   partOfSpeech: meaning.partOfSpeech,
                   definition: def.definition,
@@ -117,6 +144,14 @@ export function DefinitionPanel({ word }: DefinitionPanelProps) {
         } catch {
           continue;
         }
+      }
+
+      // API had nothing usable — fall back to static definitions
+      const staticEntry = (staticDefs as Record<string, DictDefinition[]>)[word.toLowerCase()];
+      if (staticEntry && staticEntry.length > 0) {
+        setDefinitions(staticEntry.slice(0, 3));
+        setLoading(false);
+        return;
       }
 
       setError(true);
