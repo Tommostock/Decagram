@@ -36,6 +36,7 @@ type Action =
   | { type: "DELETE_LETTER" }
   | { type: "SUBMIT_GUESS"; guess: Guess; newPhase: GamePhase }
   | { type: "CLEAR_INPUT" }
+  | { type: "GIVE_UP" }
   | { type: "PLAY_AGAIN"; dailyWord: string };
 
 function reducer(state: GameState, action: Action): GameState {
@@ -110,6 +111,9 @@ function reducer(state: GameState, action: Action): GameState {
     case "CLEAR_INPUT":
       return { ...state, currentInput: "" };
 
+    case "GIVE_UP":
+      return { ...state, phase: "LOSE", currentInput: "" };
+
     case "PLAY_AGAIN":
       return {
         ...createInitialState(action.dailyWord, state.dateKey),
@@ -147,6 +151,7 @@ export function GameBoard() {
   const [loaded, setLoaded] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [showResultModal, setShowResultModal] = useState(true);
+  const [showHint, setShowHint] = useState(false);
   const submittingRef = useRef(false);
 
   const showToast = useCallback((message: string) => {
@@ -354,6 +359,18 @@ export function GameBoard() {
     setIsPaused(false);
   }, []);
 
+  const handleRevealAnswer = useCallback(() => {
+    const newStats = { ...stats };
+    newStats.gamesPlayed++;
+    newStats.currentStreak = 0;
+    newStats.lastPlayedDate = dateKey;
+    setStats(newStats);
+    saveStats(newStats);
+    dispatch({ type: "GIVE_UP" });
+    setIsPaused(false);
+    setShowResultModal(true);
+  }, [stats, dateKey]);
+
   const handleStartNewGame = useCallback(() => {
     const newSeed = Math.random().toString(36).slice(2, 8);
     setWordSeed(newSeed);
@@ -393,6 +410,7 @@ export function GameBoard() {
         <PauseMenu
           onResume={handleResume}
           onStartNewGame={handleStartNewGame}
+          onRevealAnswer={handleRevealAnswer}
         />
       )}
 
@@ -548,9 +566,29 @@ export function GameBoard() {
             <GuessInput currentInput={state.currentInput} shaking={shaking} />
           </div>
 
-          {/* Inline definition — always visible */}
+          {/* Hint toggle */}
           <div className="w-full">
-            <DefinitionPanel word={state.dailyWord} />
+            <button
+              onClick={() => setShowHint((v) => !v)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-150 active:scale-95"
+              style={{
+                background: showHint ? "rgba(245, 200, 66, 0.12)" : "rgba(30, 30, 30, 0.5)",
+                color: showHint ? "#f5c842" : "#888",
+                border: showHint ? "1px solid rgba(245, 200, 66, 0.3)" : "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M7 6v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="7" cy="4" r="0.75" fill="currentColor" />
+              </svg>
+              {showHint ? "Hide Hint" : "Show Hint"}
+            </button>
+            {showHint && (
+              <div className="mt-2">
+                <DefinitionPanel word={state.dailyWord} />
+              </div>
+            )}
           </div>
 
           {/* Keyboard */}
