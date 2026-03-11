@@ -27,6 +27,7 @@ export interface GameState {
   revealedPositions: number[];
   guesses: Guess[];
   currentInput: string;
+  selectedInputPosition: number | null;
   keyboardStatus: Record<string, LetterStatus>;
   maxGuesses: number;
 }

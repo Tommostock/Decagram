@@ -33,6 +33,7 @@ type Action =
   | { type: "FINISH_REVEAL" }
   | { type: "TYPE_LETTER"; letter: string }
   | { type: "DELETE_LETTER" }
+  | { type: "SELECT_INPUT_POSITION"; position: number }
   | { type: "SUBMIT_GUESS"; guess: Guess; newPhase: GamePhase }
   | { type: "CLEAR_INPUT" }
   | { type: "GIVE_UP" }
@@ -84,13 +85,25 @@ function reducer(state: GameState, action: Action): GameState {
       return { ...state, phase: "GUESSING" };
 
     case "TYPE_LETTER": {
+      // If a position is selected, replace at that position
+      if (state.selectedInputPosition !== null) {
+        const chars = state.currentInput.split("");
+        chars[state.selectedInputPosition] = action.letter;
+        const newInput = chars.join("");
+        return { ...state, currentInput: newInput, selectedInputPosition: null };
+      }
+      // Otherwise, append to end (normal behavior)
       if (state.currentInput.length >= WORD_LENGTH) return state;
       return { ...state, currentInput: state.currentInput + action.letter };
     }
 
     case "DELETE_LETTER": {
       if (state.currentInput.length === 0) return state;
-      return { ...state, currentInput: state.currentInput.slice(0, -1) };
+      return { ...state, currentInput: state.currentInput.slice(0, -1), selectedInputPosition: null };
+    }
+
+    case "SELECT_INPUT_POSITION": {
+      return { ...state, selectedInputPosition: action.position };
     }
 
     case "SUBMIT_GUESS": {
@@ -585,7 +598,12 @@ export function GameBoard() {
                   : "rd"}{" "}
               guess
             </p>
-            <GuessInput currentInput={state.currentInput} shaking={shaking} />
+            <GuessInput
+              currentInput={state.currentInput}
+              shaking={shaking}
+              onLetterClick={(pos) => dispatch({ type: "SELECT_INPUT_POSITION", position: pos })}
+              selectedPosition={state.selectedInputPosition ?? undefined}
+            />
           </div>
 
           {/* Hint toggle */}
