@@ -13,7 +13,7 @@ interface LetterTileProps {
 
 const statusColors: Record<string, { bg: string; border: string }> = {
   correct: { bg: "#22c55e", border: "#16a34a" },
-  present: { bg: "#facc15", border: "#ca8a04" },
+  present: { bg: "#cc8d00", border: "#8b6009" },
   absent: { bg: "#374151", border: "#4b5563" },
   unknown: { bg: "transparent", border: "#3a3a3a" },
   empty: { bg: "transparent", border: "#2a2a2a" },
