@@ -108,6 +108,7 @@ html[data-theme="dark"] {
   --bg-keyboard-dock: rgba(10, 10, 10, 0.97);
   --border-keyboard-dock: rgba(255, 255, 255, 0.06);
   --text-key: #d0d0d0;
+  --color-gold: #f5c842;
 }
 
 /* Dark mode (default) */
