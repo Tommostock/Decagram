@@ -17,8 +17,8 @@ const ROWS = [
 ];
 
 const statusColors: Record<string, string> = {
-  correct: "#22c55e",
-  present: "#eab308",
+  correct: "#14b8a6",
+  present: "#facc15",
   absent: "#2a2a2a",
 };
 
@@ -53,11 +53,11 @@ export function Keyboard({
             if (isRevealed || status === "correct") {
               bgColor = statusColors.correct;
               opacity = 1;
-              borderColor = "#22c55e";
+              borderColor = "#14b8a6";
             } else if (status === "present") {
               bgColor = statusColors.present;
               opacity = 1;
-              borderColor = "#eab308";
+              borderColor = "#facc15";
             } else if (isAbsent) {
               // Guessed letter confirmed not in word - dark grey
               bgColor = "rgba(50, 50, 50, 0.8)";
