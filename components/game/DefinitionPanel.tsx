@@ -165,7 +165,7 @@ export function DefinitionPanel({ word }: DefinitionPanelProps) {
     <div
       className="w-full rounded-xl p-3 space-y-2"
       style={{
-        background: "rgba(15, 15, 15, 0.6)",
+        background: "var(--bg-subtle)",
         border: "1px solid rgba(245, 200, 66, 0.15)",
       }}
     >
@@ -200,7 +200,7 @@ export function DefinitionPanel({ word }: DefinitionPanelProps) {
       )}
 
       {error && !loading && (
-        <p className="text-xs text-center py-1" style={{ color: "#666" }}>
+        <p className="text-xs text-center py-1" style={{ color: "var(--text-muted)" }}>
           No definition available.
         </p>
       )}
@@ -215,7 +215,7 @@ export function DefinitionPanel({ word }: DefinitionPanelProps) {
               >
                 {def.partOfSpeech}
               </span>
-              <p className="text-xs leading-relaxed" style={{ color: "#b0b0b0" }}>
+              <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                 {def.definition}
               </p>
             </div>
