@@ -429,7 +429,7 @@ export function GameBoard() {
       )}
 
       {/* Header */}
-      <header className="w-full flex items-center justify-center mb-2 px-1">
+      <header className="w-full flex items-center justify-between mb-2 px-1">
         <div className="text-center">
           <h1
             className="text-3xl sm:text-4xl font-black tracking-widest"
