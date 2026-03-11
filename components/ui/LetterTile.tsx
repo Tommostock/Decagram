@@ -77,7 +77,7 @@ export function LetterTile({
               transform: "rotateX(180deg)",
               backfaceVisibility: "hidden",
               color: status === "present" ? "#2a2a2a" : "#fff",
-              boxShadow: status === "present" ? "0 0 12px rgba(251, 192, 45, 0.6)" : undefined,
+              boxShadow: (status === "present" ? "0 0 12px rgba(251, 192, 45, 0.6)" : "none") + ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
             }}
           >
             {letter?.toUpperCase()}
@@ -106,11 +106,9 @@ export function LetterTile({
               ? "#2a2a2a"
               : "#fff",
           transform: letter && !flipped ? "scale(1)" : undefined,
-          boxShadow: isCorrect || isRevealed
-            ? "0 0 12px rgba(34, 197, 94, 0.5)"
-            : status === "present"
-            ? "0 0 12px rgba(251, 192, 45, 0.6)"
-            : "none",
+          boxShadow:
+            (isCorrect || isRevealed ? "0 0 12px rgba(34, 197, 94, 0.5)" : status === "present" ? "0 0 12px rgba(251, 192, 45, 0.6)" : "none") +
+            ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
           backdropFilter: "blur(8px)",
           background: colors.bg === "transparent"
             ? "var(--bg-tile-empty)"
