@@ -123,12 +123,28 @@ function getWordVariants(word: string): string[] {
   return variants;
 }
 
+/**
+ * Returns true if the definition text contains the target word or a close variant.
+ * Used to filter out definitions that give away the answer.
+ */
+function definitionRevealsTword(definition: string, targetWord: string, variants: string[]): boolean {
+  const defLower = definition.toLowerCase();
+  const allForms = [targetWord.toLowerCase(), ...variants];
+  for (const form of allForms) {
+    if (form.length < 4) continue;
+    // Match the form as a word-boundary prefix (catches plurals, -ed, -ing etc.)
+    if (new RegExp(`\\b${form.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i').test(defLower)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function HintModal({ word, onClose }: HintModalProps) {
   const [definitions, setDefinitions] = useState<DictDefinition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [lookedUpWord, setLookedUpWord] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 10);
@@ -152,6 +168,8 @@ export function HintModal({ word, onClose }: HintModalProps) {
             for (const meaning of entry.meanings) {
               for (const def of meaning.definitions) {
                 if (defs.length >= 3) break;
+                // Skip definitions that contain the target word or its variants
+                if (definitionRevealsTword(def.definition, word, variants)) continue;
                 defs.push({
                   partOfSpeech: meaning.partOfSpeech,
                   definition: def.definition,
@@ -164,7 +182,6 @@ export function HintModal({ word, onClose }: HintModalProps) {
 
           if (defs.length > 0) {
             setDefinitions(defs);
-            setLookedUpWord(variant !== word.toLowerCase() ? variant : null);
             setLoading(false);
             return;
           }
@@ -256,12 +273,6 @@ export function HintModal({ word, onClose }: HintModalProps) {
 
         {!loading && !error && definitions.length > 0 && (
           <div className="space-y-3">
-            {lookedUpWord && (
-              <p className="text-[10px] uppercase tracking-widest pb-1" style={{ color: "#555" }}>
-                Definition for:{" "}
-                <span style={{ color: "#777" }}>{lookedUpWord.toUpperCase()}</span>
-              </p>
-            )}
             {definitions.map((def, i) => (
               <div key={i} className="space-y-0.5">
                 <span

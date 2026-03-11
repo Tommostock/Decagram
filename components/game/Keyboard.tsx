@@ -49,7 +49,8 @@ export function Keyboard({
             let opacity: number;
             let borderColor: string;
 
-            if (status === "correct") {
+            // Revealed letters (initially selected) take priority — they're confirmed in the word
+            if (isRevealed || status === "correct") {
               bgColor = statusColors.correct;
               opacity = 1;
               borderColor = "#22c55e";
@@ -58,23 +59,18 @@ export function Keyboard({
               opacity = 1;
               borderColor = "#eab308";
             } else if (isAbsent) {
-              // Guessed letter not in word - dark grey
+              // Guessed letter confirmed not in word - dark grey
               bgColor = "rgba(50, 50, 50, 0.8)";
               opacity = 0.5;
               borderColor = "rgba(255,255,255,0.05)";
-            } else if (isRevealed) {
-              // Initially revealed letter - lighter grey
-              bgColor = "rgba(80, 80, 80, 0.6)";
-              opacity = 0.6;
-              borderColor = "rgba(255,255,255,0.15)";
             } else {
               bgColor = "rgba(50, 50, 50, 0.8)";
               opacity = 1;
               borderColor = "rgba(255,255,255,0.1)";
             }
 
-            const isActive = status === "correct" || status === "present";
-            const isInteractive = !isAbsent && !isRevealed;
+            const isActive = isRevealed || status === "correct" || status === "present";
+            const isInteractive = !isAbsent;
 
             return (
               <div key={key} className={`relative ${isSpecial ? "flex-[1.5] sm:flex-none" : "flex-1 sm:flex-none"}`}>
@@ -90,14 +86,18 @@ export function Keyboard({
                     backgroundColor: bgColor,
                     opacity: opacity,
                     color:
-                      status === "correct" || status === "present"
+                      isRevealed || status === "correct" || status === "present"
                         ? "#fff"
-                        : status === "absent" || isRevealed
+                        : status === "absent"
                           ? "#888"
                           : "#d0d0d0",
-                    border: `${isRevealed ? "1.5px" : status ? "2px" : "1px"} solid ${borderColor}`,
+                    border: `${isRevealed || status ? "2px" : "1px"} solid ${borderColor}`,
                     backdropFilter: "blur(12px)",
-                    boxShadow: status ? `inset 0 0 8px ${statusColors[status]}` : "none",
+                    boxShadow: isRevealed
+                      ? `inset 0 0 8px ${statusColors.correct}`
+                      : status
+                        ? `inset 0 0 8px ${statusColors[status]}`
+                        : "none",
                     transition: "all 0.15s ease",
                   }}
                 >

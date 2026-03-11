@@ -24,7 +24,7 @@ import { GuessHistory } from "./GuessHistory";
 import { Keyboard } from "./Keyboard";
 import { ResultModal } from "./ResultModal";
 import { PauseMenu } from "./PauseMenu";
-import { HintModal } from "./HintModal";
+import { DefinitionPanel } from "./DefinitionPanel";
 
 type Action =
   | { type: "RESTORE"; state: GameState }
@@ -146,7 +146,7 @@ export function GameBoard() {
   const [isRevealingWord, setIsRevealingWord] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [showHint, setShowHint] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(true);
   const submittingRef = useRef(false);
 
   const showToast = useCallback((message: string) => {
@@ -335,6 +335,7 @@ export function GameBoard() {
   // Play again handler - reset game to letter selection (same active word)
   const handlePlayAgain = useCallback(() => {
     const newSeed = Math.random().toString(36).slice(2, 8);
+    setShowResultModal(true);
     setWordSeed(newSeed);
     const newWord = getDailyWord(`${dateKey}-${newSeed}`);
     dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
@@ -547,30 +548,9 @@ export function GameBoard() {
             <GuessInput currentInput={state.currentInput} shaking={shaking} />
           </div>
 
-          {/* Hint button */}
-          <div className="w-full flex justify-center pt-1">
-            <button
-              onClick={() => setShowHint(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-150 active:scale-95"
-              style={{
-                background: "rgba(245, 200, 66, 0.08)",
-                border: "1px solid rgba(245, 200, 66, 0.2)",
-                color: "#d4a527",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(245, 200, 66, 0.14)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(245, 200, 66, 0.08)";
-              }}
-            >
-              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M7 6v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                <circle cx="7" cy="4" r="0.75" fill="currentColor" />
-              </svg>
-              Hint
-            </button>
+          {/* Inline definition — always visible */}
+          <div className="w-full">
+            <DefinitionPanel word={state.dailyWord} />
           </div>
 
           {/* Keyboard */}
@@ -584,14 +564,6 @@ export function GameBoard() {
             />
           </div>
         </>
-      )}
-
-      {/* Hint modal */}
-      {showHint && (
-        <HintModal
-          word={state.dailyWord}
-          onClose={() => setShowHint(false)}
-        />
       )}
 
       {/* Reveal phase - show loading while animation plays */}
@@ -612,15 +584,18 @@ export function GameBoard() {
             />
           </div>
 
-          <ResultModal
-            won={state.phase === "WIN"}
-            dailyWord={state.dailyWord}
-            dateKey={state.dateKey}
-            guesses={state.guesses}
-            maxGuesses={state.maxGuesses}
-            stats={stats}
-            onPlayAgain={handlePlayAgain}
-          />
+          {showResultModal && (
+            <ResultModal
+              won={state.phase === "WIN"}
+              dailyWord={state.dailyWord}
+              dateKey={state.dateKey}
+              guesses={state.guesses}
+              maxGuesses={state.maxGuesses}
+              stats={stats}
+              onPlayAgain={handlePlayAgain}
+              onClose={() => setShowResultModal(false)}
+            />
+          )}
         </>
       )}
 
