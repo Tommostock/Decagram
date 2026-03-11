@@ -4,9 +4,10 @@ interface PauseMenuProps {
   onResume: () => void;
   onStartNewGame: () => void;
   onRevealAnswer: () => void;
+  isGameOver?: boolean;
 }
 
-export function PauseMenu({ onResume, onStartNewGame, onRevealAnswer }: PauseMenuProps) {
+export function PauseMenu({ onResume, onStartNewGame, onRevealAnswer, isGameOver = false }: PauseMenuProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -30,30 +31,32 @@ export function PauseMenu({ onResume, onStartNewGame, onRevealAnswer }: PauseMen
               backgroundClip: "text",
             }}
           >
-            PAUSED
+            {isGameOver ? "MENU" : "PAUSED"}
           </p>
         </div>
 
-        {/* Resume */}
-        <button
-          onClick={onResume}
-          className="w-full px-4 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 active:scale-95"
-          style={{
-            background: "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)",
-            color: "#0a0a0a",
-            border: "none",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background =
-              "linear-gradient(135deg, #f7d060 0%, #e0b030 100%)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background =
-              "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)";
-          }}
-        >
-          Resume
-        </button>
+        {/* Resume — only during active game */}
+        {!isGameOver && (
+          <button
+            onClick={onResume}
+            className="w-full px-4 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 active:scale-95"
+            style={{
+              background: "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)",
+              color: "#0a0a0a",
+              border: "none",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, #f7d060 0%, #e0b030 100%)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)";
+            }}
+          >
+            Resume
+          </button>
+        )}
 
         {/* Start New Game */}
         <button
@@ -74,26 +77,28 @@ export function PauseMenu({ onResume, onStartNewGame, onRevealAnswer }: PauseMen
           Start New Game
         </button>
 
-        {/* Reveal Answer */}
-        <button
-          onClick={onRevealAnswer}
-          className="w-full px-4 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 active:scale-95"
-          style={{
-            background: "rgba(30, 30, 30, 0.6)",
-            color: "#888",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(50, 50, 50, 0.7)";
-            e.currentTarget.style.color = "#aaa";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(30, 30, 30, 0.6)";
-            e.currentTarget.style.color = "#888";
-          }}
-        >
-          Reveal Answer
-        </button>
+        {/* Reveal Answer — only during active game */}
+        {!isGameOver && (
+          <button
+            onClick={onRevealAnswer}
+            className="w-full px-4 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 active:scale-95"
+            style={{
+              background: "rgba(30, 30, 30, 0.6)",
+              color: "#888",
+              border: "1px solid rgba(255, 255, 255, 0.06)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(50, 50, 50, 0.7)";
+              e.currentTarget.style.color = "#aaa";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(30, 30, 30, 0.6)";
+              e.currentTarget.style.color = "#888";
+            }}
+          >
+            Reveal Answer
+          </button>
+        )}
       </div>
     </div>
   );
