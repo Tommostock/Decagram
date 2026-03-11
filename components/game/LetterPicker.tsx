@@ -26,18 +26,18 @@ export function LetterPicker({
     <div className="w-full max-w-md mx-auto space-y-5">
       {/* Instructions */}
       <div className="text-center space-y-1">
-        <p className="text-sm text-[#a0a0a0]">
+        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
           Choose <span className="text-[#f5c842] font-semibold">{REQUIRED_CONSONANTS} consonants</span> and{" "}
           <span className="text-[#f5c842] font-semibold">{REQUIRED_VOWELS} vowel</span>
         </p>
-        <p className="text-xs text-[#666]">
+        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
           These letters will be revealed in the hidden word
         </p>
       </div>
 
       {/* Consonants */}
       <div>
-        <p className="text-xs text-[#888] uppercase tracking-wider mb-2">
+        <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "var(--text-dim)" }}>
           Consonants ({selectedConsonants.length}/{REQUIRED_CONSONANTS})
         </p>
         <div className="flex flex-wrap justify-center gap-1.5">
@@ -57,11 +57,11 @@ export function LetterPicker({
                   style={{
                     background: isSelected
                       ? "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)"
-                      : "rgba(30, 30, 30, 0.4)",
-                    color: isSelected ? "#0a0a0a" : "#e8e8e8",
+                      : "var(--bg-subtle)",
+                    color: isSelected ? "#0a0a0a" : "var(--text-primary)",
                     border: isSelected
                       ? "2px solid #f5c842"
-                      : "1px solid rgba(255,255,255,0.1)",
+                      : "1px solid var(--border-light)",
                     backdropFilter: "blur(12px)",
                     transition: "all 0.2s ease",
                   }}
@@ -76,7 +76,7 @@ export function LetterPicker({
 
       {/* Vowels */}
       <div>
-        <p className="text-xs text-[#888] uppercase tracking-wider mb-2">
+        <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "var(--text-dim)" }}>
           Vowel ({selectedVowel ? "1" : "0"}/{REQUIRED_VOWELS})
         </p>
         <div className="flex justify-center gap-2">
@@ -96,11 +96,11 @@ export function LetterPicker({
                   style={{
                     background: isSelected
                       ? "linear-gradient(135deg, #f5c842 0%, #d4a527 100%)"
-                      : "rgba(30, 30, 30, 0.4)",
-                    color: isSelected ? "#0a0a0a" : "#e8e8e8",
+                      : "var(--bg-subtle)",
+                    color: isSelected ? "#0a0a0a" : "var(--text-primary)",
                     border: isSelected
                       ? "2px solid #f5c842"
-                      : "1px solid rgba(255,255,255,0.1)",
+                      : "1px solid var(--border-light)",
                     backdropFilter: "blur(12px)",
                     transition: "all 0.2s ease",
                   }}

@@ -60,13 +60,13 @@ export function Keyboard({
               borderColor = "#facc15";
             } else if (isAbsent) {
               // Guessed letter confirmed not in word - dark grey
-              bgColor = "rgba(50, 50, 50, 0.8)";
+              bgColor = "var(--bg-key)";
               opacity = 0.5;
-              borderColor = "rgba(255,255,255,0.05)";
+              borderColor = "var(--border-glass)";
             } else {
-              bgColor = "rgba(50, 50, 50, 0.8)";
+              bgColor = "var(--bg-key)";
               opacity = 1;
-              borderColor = "rgba(255,255,255,0.1)";
+              borderColor = "var(--border-light)";
             }
 
             const isActive = isRevealed || status === "correct" || status === "present";
@@ -89,8 +89,8 @@ export function Keyboard({
                       isRevealed || status === "correct" || status === "present"
                         ? "#fff"
                         : status === "absent"
-                          ? "#888"
-                          : "#d0d0d0",
+                          ? "var(--text-dim)"
+                          : "var(--text-key)",
                     border: `${isRevealed || status ? "2px" : "1px"} solid ${borderColor}`,
                     backdropFilter: "blur(12px)",
                     boxShadow: isRevealed

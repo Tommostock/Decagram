@@ -10,7 +10,7 @@ export function GlassPanel({ children, className = "" }: GlassPanelProps) {
     <div
       className={`rounded-2xl border border-white/[0.06] p-4 sm:p-6 ${className}`}
       style={{
-        background: "rgba(20, 20, 20, 0.8)",
+        background: "var(--bg-glass)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
       }}
@@ -19,3 +19,4 @@ export function GlassPanel({ children, className = "" }: GlassPanelProps) {
     </div>
   );
 }
+

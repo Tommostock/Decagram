@@ -16,7 +16,7 @@ export function PauseMenu({ onResume, onStartNewGame, onRevealAnswer, isGameOver
       <div
         className="w-full max-w-xs rounded-2xl border border-white/[0.08] p-6 space-y-3"
         style={{
-          background: "rgba(15, 15, 15, 0.97)",
+          background: "var(--bg-glass-dense)",
           backdropFilter: "blur(24px)",
         }}
       >
@@ -63,15 +63,15 @@ export function PauseMenu({ onResume, onStartNewGame, onRevealAnswer, isGameOver
           onClick={onStartNewGame}
           className="w-full px-4 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 active:scale-95"
           style={{
-            background: "rgba(50, 50, 50, 0.8)",
-            color: "#e8e8e8",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            background: "var(--bg-key)",
+            color: "var(--text-primary)",
+            border: "1px solid var(--border-light)",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(70, 70, 70, 0.9)";
+            e.currentTarget.style.background = "var(--bg-key-hover)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(50, 50, 50, 0.8)";
+            e.currentTarget.style.background = "var(--bg-key)";
           }}
         >
           Start New Game
@@ -83,17 +83,17 @@ export function PauseMenu({ onResume, onStartNewGame, onRevealAnswer, isGameOver
             onClick={onRevealAnswer}
             className="w-full px-4 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 active:scale-95"
             style={{
-              background: "rgba(30, 30, 30, 0.6)",
-              color: "#888",
-              border: "1px solid rgba(255, 255, 255, 0.06)",
+              background: "var(--bg-subtle)",
+              color: "var(--text-dim)",
+              border: "1px solid var(--border-glass)",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(50, 50, 50, 0.7)";
-              e.currentTarget.style.color = "#aaa";
+              e.currentTarget.style.background = "var(--bg-key)";
+              e.currentTarget.style.color = "var(--text-secondary)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(30, 30, 30, 0.6)";
-              e.currentTarget.style.color = "#888";
+              e.currentTarget.style.background = "var(--bg-subtle)";
+              e.currentTarget.style.color = "var(--text-dim)";
             }}
           >
             Reveal Answer

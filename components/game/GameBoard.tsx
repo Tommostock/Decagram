@@ -448,13 +448,13 @@ export function GameBoard() {
           <p
             className="text-xs tracking-wider mt-0.5"
             style={{
-              color: "var(--theme-secondary-text, #666)",
+              color: "var(--text-muted)",
             }}
           >
             DAILY 10-LETTER PUZZLE
           </p>
           <p className="text-[10px] tracking-wider mt-1.5 flex items-center justify-center gap-1">
-            <span style={{ color: "var(--theme-secondary-text, #888)" }}>Made by</span>
+            <span style={{ color: "var(--text-dim)" }}>Made by</span>
             <a
               href="https://www.youtube.com/spektator"
               target="_blank"
@@ -483,14 +483,14 @@ export function GameBoard() {
             onClick={() => setIsPaused(true)}
             className="w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 active:scale-90"
             style={{
-              background: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              background: "var(--bg-header-btn)",
+              border: "1px solid var(--border-light)",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+              e.currentTarget.style.background = "var(--bg-header-btn-hover)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+              e.currentTarget.style.background = "var(--bg-header-btn)";
             }}
             aria-label="Pause"
           >
@@ -569,7 +569,7 @@ export function GameBoard() {
           {/* Guess history */}
           {state.guesses.length > 0 && (
             <div className="w-full">
-              <p className="text-xs text-[#666] text-center mb-2">
+              <p className="text-xs text-center mb-2" style={{ color: "var(--text-muted)" }}>
                 {state.guesses.length}/{state.maxGuesses} guesses used
               </p>
               <GuessHistory
@@ -581,7 +581,7 @@ export function GameBoard() {
 
           {/* Current guess input */}
           <div className="w-full">
-            <p className="text-xs text-[#888] text-center mb-2">
+            <p className="text-xs text-center mb-2" style={{ color: "var(--text-dim)" }}>
               Enter your {state.guesses.length + 1}
               {state.guesses.length === 0
                 ? "st"
@@ -599,9 +599,9 @@ export function GameBoard() {
               onClick={() => setShowHint((v) => !v)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-150 active:scale-95"
               style={{
-                background: showHint ? "rgba(245, 200, 66, 0.12)" : "rgba(30, 30, 30, 0.5)",
-                color: showHint ? "#f5c842" : "#888",
-                border: showHint ? "1px solid rgba(245, 200, 66, 0.3)" : "1px solid rgba(255,255,255,0.08)",
+                background: showHint ? "rgba(245, 200, 66, 0.12)" : "var(--bg-subtle)",
+                color: showHint ? "#f5c842" : "var(--text-dim)",
+                border: showHint ? "1px solid rgba(245, 200, 66, 0.3)" : "1px solid var(--border-light)",
               }}
             >
               <svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">

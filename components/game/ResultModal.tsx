@@ -63,7 +63,7 @@ export function ResultModal({
           visible ? "scale-100 translate-y-0" : "scale-90 translate-y-4"
         }`}
         style={{
-          background: "rgba(15, 15, 15, 0.95)",
+          background: "var(--bg-glass-dense)",
           backdropFilter: "blur(20px)",
         }}
       >
@@ -74,9 +74,9 @@ export function ResultModal({
               onClick={onClose}
               className="absolute right-0 top-0 w-7 h-7 flex items-center justify-center rounded-lg transition-all duration-150 active:scale-90"
               style={{
-                color: "#666",
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.06)",
+                color: "var(--text-muted)",
+                background: "var(--bg-header-btn)",
+                border: "1px solid var(--border-glass)",
               }}
               aria-label="Close"
             >
@@ -88,7 +88,7 @@ export function ResultModal({
           <p className="text-2xl font-bold mb-1">
             {won ? "Brilliant!" : "So Close!"}
           </p>
-          <p className="text-sm text-[#a0a0a0]">
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
             {won
               ? `Solved in ${guesses.length} guess${guesses.length > 1 ? "es" : ""}`
               : "Better luck tomorrow"}
@@ -98,7 +98,7 @@ export function ResultModal({
         {/* Answer reveal (on lose) */}
         {!won && (
           <div className="text-center">
-            <p className="text-xs text-[#888] uppercase tracking-wider mb-1">
+            <p className="text-xs text-[var(--text-dim)] uppercase tracking-wider mb-1">
               The word was
             </p>
             <p
@@ -114,39 +114,39 @@ export function ResultModal({
         <div className="grid grid-cols-4 gap-2 text-center">
           <div>
             <p className="text-xl font-bold">{stats.gamesPlayed}</p>
-            <p className="text-[10px] text-[#888] uppercase">Played</p>
+            <p className="text-[10px] text-[var(--text-dim)] uppercase">Played</p>
           </div>
           <div>
             <p className="text-xl font-bold">{winPct}</p>
-            <p className="text-[10px] text-[#888] uppercase">Win %</p>
+            <p className="text-[10px] text-[var(--text-dim)] uppercase">Win %</p>
           </div>
           <div>
             <p className="text-xl font-bold">{stats.currentStreak}</p>
-            <p className="text-[10px] text-[#888] uppercase">Streak</p>
+            <p className="text-[10px] text-[var(--text-dim)] uppercase">Streak</p>
           </div>
           <div>
             <p className="text-xl font-bold">{stats.maxStreak}</p>
-            <p className="text-[10px] text-[#888] uppercase">Max</p>
+            <p className="text-[10px] text-[var(--text-dim)] uppercase">Max</p>
           </div>
         </div>
 
         {/* Guess distribution */}
         <div className="space-y-1">
-          <p className="text-xs text-[#888] uppercase tracking-wider mb-2">
+          <p className="text-xs text-[var(--text-dim)] uppercase tracking-wider mb-2">
             Guess Distribution
           </p>
           {stats.guessDistribution.map((count, i) => (
             <div key={i} className="flex items-center gap-2">
               <span className="text-xs font-bold w-3">{i + 1}</span>
-              <div className="flex-1 h-5 rounded overflow-hidden" style={{ background: "rgba(30,30,30,0.6)" }}>
+              <div className="flex-1 h-5 rounded overflow-hidden" style={{ background: "var(--bg-dist-bar)" }}>
                 <div
                   className="h-full rounded flex items-center justify-end px-1.5 text-[10px] font-bold transition-all duration-700"
                   style={{
                     width: `${Math.max((count / maxDist) * 100, count > 0 ? 12 : 4)}%`,
                     background:
                       won && guesses.length === i + 1
-                        ? "#22c55e"
-                        : "rgba(80, 80, 80, 0.8)",
+                        ? "#14b8a6"
+                        : "var(--bg-key)",
                     color: "#fff",
                   }}
                 >
@@ -164,15 +164,15 @@ export function ResultModal({
               onClick={onPlayAgain}
               className="flex-1 px-4 py-3 rounded-lg font-semibold transition-all duration-200"
               style={{
-                background: "rgba(80, 80, 80, 0.6)",
-                color: "#e8e8e8",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                background: "var(--bg-key)",
+                color: "var(--text-primary)",
+                border: "1px solid var(--border-light)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(100, 100, 100, 0.8)";
+                e.currentTarget.style.background = "var(--bg-key-hover)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(80, 80, 80, 0.6)";
+                e.currentTarget.style.background = "var(--bg-key)";
               }}
             >
               Play Again

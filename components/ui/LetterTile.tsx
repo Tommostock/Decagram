@@ -105,7 +105,7 @@ export function LetterTile({
           boxShadow: isCorrect ? "0 0 12px rgba(20, 184, 166, 0.5)" : isRevealed ? "0 0 12px rgba(34, 197, 94, 0.5)" : "none",
           backdropFilter: "blur(8px)",
           background: colors.bg === "transparent"
-            ? "rgba(20, 20, 20, 0.3)"
+            ? "var(--bg-tile-empty)"
             : colors.bg,
         }}
       >
