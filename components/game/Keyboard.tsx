@@ -36,9 +36,9 @@ export function Keyboard({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-1">
+    <div className="w-full mx-auto space-y-2 px-1">
       {ROWS.map((row, rowIdx) => (
-        <div key={rowIdx} className="flex gap-1 justify-center">
+        <div key={rowIdx} className="flex gap-1.5 justify-center">
           {row.map((key) => {
             const isSpecial = key === "ENTER" || key === "DEL";
             const status = keyboardStatus[key];
@@ -73,10 +73,10 @@ export function Keyboard({
             const isInteractive = !isAbsent;
 
             return (
-              <div key={key} className={`relative ${isSpecial ? "flex-[1.2]" : "flex-1"}`}>
+              <div key={key} className={`relative ${isSpecial ? "flex-[1.4]" : "flex-1"}`}>
                 <button
                   onClick={() => handleClick(key)}
-                  className={`glass-button w-full h-10 text-xs rounded-lg font-semibold transition-all duration-100 select-none relative
+                  className={`glass-button w-full h-12 text-sm rounded-lg font-semibold transition-all duration-100 select-none relative
                     ${isActive ? "active" : ""}
                     ${isInteractive ? "hover:scale-105 hover:brightness-110 active:scale-95 active:brightness-75" : ""}
                   `}
