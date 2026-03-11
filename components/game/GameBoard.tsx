@@ -429,7 +429,7 @@ export function GameBoard() {
       )}
 
       {/* Header */}
-      <header className="w-full flex items-center justify-between mb-2 px-1">
+      <header className="w-full flex items-center justify-center mb-2 px-1 relative">
         <div className="text-center">
           <h1
             className="text-3xl sm:text-4xl font-black tracking-widest"
@@ -478,7 +478,7 @@ export function GameBoard() {
         {canPause ? (
           <button
             onClick={() => setIsPaused(true)}
-            className="w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 active:scale-90"
+            className="absolute right-1 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 active:scale-90"
             style={{
               background: "var(--bg-header-btn)",
               border: "1px solid var(--border-light)",
@@ -504,9 +504,7 @@ export function GameBoard() {
               </defs>
             </svg>
           </button>
-        ) : (
-          <div className="w-8" />
-        )}
+        ) : null}
       </header>
 
       {/* Word display (visible during reveal and guessing phases) */}
