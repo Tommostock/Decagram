@@ -343,6 +343,8 @@ export function GameBoard() {
   const handlePlayAgain = useCallback(() => {
     const newSeed = Math.random().toString(36).slice(2, 8);
     setShowResultModal(true);
+    setShowHint(false);
+    setRevealAllLetters(false);
     setWordSeed(newSeed);
     const newWord = getDailyWord(`${dateKey}-${newSeed}`);
     dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
@@ -382,6 +384,9 @@ export function GameBoard() {
 
   const handleStartNewGame = useCallback(() => {
     const newSeed = Math.random().toString(36).slice(2, 8);
+    setShowResultModal(true);
+    setShowHint(false);
+    setRevealAllLetters(false);
     setWordSeed(newSeed);
     const newWord = getDailyWord(`${dateKey}-${newSeed}`);
     dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
