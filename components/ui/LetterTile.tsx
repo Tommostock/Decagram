@@ -33,17 +33,12 @@ export function LetterTile({
   size = "md",
   colorBlind = false,
 }: LetterTileProps) {
-  const [flipped, setFlipped] = useState(false);
-  const [showBack, setShowBack] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     if (isRevealing) {
-      const flipTimer = setTimeout(() => setFlipped(true), delay);
-      const showTimer = setTimeout(() => setShowBack(true), delay + 300);
-      return () => {
-        clearTimeout(flipTimer);
-        clearTimeout(showTimer);
-      };
+      const timer = setTimeout(() => setIsFlipped(true), delay);
+      return () => clearTimeout(timer);
     }
   }, [isRevealing, delay]);
 
@@ -59,31 +54,58 @@ export function LetterTile({
     const backColors = colors;
 
     return (
-      <div className={`${sizeClasses} select-none`} style={{ perspective: "600px" }}>
+      <div className={`${sizeClasses} select-none`} style={{ perspective: "1000px" }}>
         <div
-          className="w-full h-full relative transition-transform duration-500"
           style={{
+            width: "100%",
+            height: "100%",
+            position: "relative",
             transformStyle: "preserve-3d",
-            transform: flipped ? "rotateX(180deg)" : "rotateX(0deg)",
+            transform: isFlipped ? "rotateY(0deg)" : "rotateY(90deg)",
+            transition: `transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)`,
           }}
         >
+          {/* Front: blank tile */}
           <div
-            className="absolute inset-0 flex items-center justify-center rounded-lg border-2 font-bold backface-hidden"
             style={{
-              backgroundColor: frontColors.bg,
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "0.5rem",
+              border: "2px solid",
               borderColor: frontColors.border,
+              backgroundColor: frontColors.bg,
               backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden",
             }}
           />
+          {/* Back: revealed tile with letter */}
           <div
-            className="absolute inset-0 flex items-center justify-center rounded-lg border-2 font-bold"
             style={{
-              backgroundColor: backColors.bg,
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "0.5rem",
+              border: "2px solid",
               borderColor: backColors.border,
-              transform: "rotateX(180deg)",
-              backfaceVisibility: "hidden",
+              backgroundColor: backColors.bg,
               color: "#fff",
-              boxShadow: (status === "present" ? `0 0 12px ${statusColors.present.glow}` : status === "correct" || status === "revealed" ? `0 0 12px ${statusColors.correct.glow}` : "none") + ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
+              fontWeight: "bold",
+              transform: "rotateY(180deg)",
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden",
+              boxShadow:
+                (status === "present"
+                  ? `0 0 12px ${statusColors.present.glow}`
+                  : status === "correct" || status === "revealed"
+                    ? `0 0 12px ${statusColors.correct.glow}`
+                    : "none") + ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
             }}
           >
             {letter?.toUpperCase()}
@@ -97,28 +119,23 @@ export function LetterTile({
   const isRevealed = status === "revealed";
 
   return (
-    <div className="relative inline-block">
-      <div
-        className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold transition-all duration-200 select-none`}
-        style={{
-          backgroundColor: colors.bg,
-          borderColor: colors.border,
-          color:
-            status === "empty" || status === "unknown"
-              ? "#e8e8e8"
-              : "#fff",
-          transform: letter && !flipped ? "scale(1)" : undefined,
-          boxShadow:
-            (isCorrect || isRevealed ? `0 0 12px ${statusColors.correct.glow}` : status === "present" ? `0 0 12px ${statusColors.present.glow}` : "none") +
-            ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
-          backdropFilter: "blur(8px)",
-          background: colors.bg === "transparent"
-            ? "var(--bg-tile-empty)"
-            : colors.bg,
-        }}
-      >
-        {letter?.toUpperCase()}
-      </div>
+    <div
+      className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold select-none`}
+      style={{
+        backgroundColor: colors.bg,
+        borderColor: colors.border,
+        color: status === "empty" || status === "unknown" ? "#e8e8e8" : "#fff",
+        boxShadow:
+          (isCorrect || isRevealed
+            ? `0 0 12px ${statusColors.correct.glow}`
+            : status === "present"
+              ? `0 0 12px ${statusColors.present.glow}`
+              : "none") + ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
+        backdropFilter: "blur(8px)",
+        background: colors.bg === "transparent" ? "var(--bg-tile-empty)" : colors.bg,
+      }}
+    >
+      {letter?.toUpperCase()}
     </div>
   );
 }
