@@ -90,17 +90,15 @@ export function PauseMenu({ onResume, onStartNewGame, onRevealAnswer, isGameOver
             onClick={onRevealAnswer}
             className="w-full px-4 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 active:scale-95"
             style={{
-              background: "var(--bg-subtle)",
-              color: "var(--text-dim)",
-              border: "1px solid var(--border-glass)",
+              background: "var(--bg-key)",
+              color: "var(--text-primary)",
+              border: "1px solid var(--border-light)",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "var(--bg-key)";
-              e.currentTarget.style.color = "var(--text-secondary)";
+              e.currentTarget.style.background = "var(--bg-key-hover)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "var(--bg-subtle)";
-              e.currentTarget.style.color = "var(--text-dim)";
+              e.currentTarget.style.background = "var(--bg-key)";
             }}
           >
             Reveal Answer
@@ -113,9 +111,15 @@ export function PauseMenu({ onResume, onStartNewGame, onRevealAnswer, isGameOver
             onClick={onToggleColorBlind}
             className="w-full px-4 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 active:scale-95 flex items-center justify-between"
             style={{
-              background: "var(--bg-subtle)",
-              color: "var(--text-dim)",
-              border: "1px solid var(--border-glass)",
+              background: "var(--bg-key)",
+              color: "var(--text-primary)",
+              border: "1px solid var(--border-light)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "var(--bg-key-hover)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "var(--bg-key)";
             }}
           >
             <span>Colour-Blind Mode</span>
@@ -150,9 +154,15 @@ export function PauseMenu({ onResume, onStartNewGame, onRevealAnswer, isGameOver
           onClick={() => setShowAchievements((v) => !v)}
           className="w-full px-4 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 active:scale-95"
           style={{
-            background: showAchievements ? "rgba(245, 200, 66, 0.08)" : "var(--bg-subtle)",
-            color: showAchievements ? "#f5c842" : "var(--text-dim)",
-            border: showAchievements ? "1px solid rgba(245, 200, 66, 0.2)" : "1px solid var(--border-glass)",
+            background: "var(--bg-key)",
+            color: "var(--text-primary)",
+            border: "1px solid var(--border-light)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "var(--bg-key-hover)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "var(--bg-key)";
           }}
         >
           🏆 Achievements
