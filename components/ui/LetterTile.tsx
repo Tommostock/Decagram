@@ -99,9 +99,7 @@ export function LetterTile({
   return (
     <div className="relative inline-block">
       <div
-        className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold transition-all duration-200 select-none
-          ${isCorrect ? "animate-heartbeat" : ""}
-        `}
+        className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold transition-all duration-200 select-none`}
         style={{
           backgroundColor: colors.bg,
           borderColor: colors.border,
