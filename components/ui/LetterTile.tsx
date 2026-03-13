@@ -61,7 +61,7 @@ export function LetterTile({
             height: "100%",
             position: "relative",
             transformStyle: "preserve-3d",
-            transform: isFlipped ? "rotateY(0deg)" : "rotateY(90deg)",
+            transform: isFlipped ? "rotateX(0deg)" : "rotateX(90deg)",
             transition: `transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)`,
           }}
         >
@@ -97,7 +97,7 @@ export function LetterTile({
               backgroundColor: backColors.bg,
               color: "#fff",
               fontWeight: "bold",
-              transform: "rotateY(180deg)",
+              transform: "rotateX(180deg)",
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               boxShadow:
