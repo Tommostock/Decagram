@@ -36,11 +36,11 @@ export function LetterTile({
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
-    if (isRevealing) {
+    if (isRevealing && status === "revealed") {
       const timer = setTimeout(() => setIsFlipped(true), delay);
       return () => clearTimeout(timer);
     }
-  }, [isRevealing, delay]);
+  }, [isRevealing, delay, status]);
 
   const statusColors = getStatusColors(colorBlind);
   const colors = statusColors[status] || statusColors.empty;
@@ -49,7 +49,7 @@ export function LetterTile({
       ? "w-[30px] h-[38px] text-sm sm:w-[34px] sm:h-[42px]"
       : "w-[32px] h-[40px] text-base sm:w-[40px] sm:h-[50px] sm:text-xl";
 
-  if (isRevealing) {
+  if (isRevealing && status === "revealed") {
     const frontColors = statusColors.empty;
     const backColors = colors;
 
@@ -62,7 +62,7 @@ export function LetterTile({
             position: "relative",
             transformStyle: "preserve-3d",
             transform: isFlipped ? "rotateX(0deg)" : "rotateX(90deg)",
-            transition: `transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)`,
+            transition: `transform 0.5s ease-out`,
           }}
         >
           {/* Front: blank tile */}
@@ -100,12 +100,7 @@ export function LetterTile({
               transform: "rotateX(180deg)",
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
-              boxShadow:
-                (status === "present"
-                  ? `0 0 12px ${statusColors.present.glow}`
-                  : status === "correct" || status === "revealed"
-                    ? `0 0 12px ${statusColors.correct.glow}`
-                    : "none") + ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
+              boxShadow: `0 0 12px ${statusColors.correct.glow}, inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)`,
             }}
           >
             {letter?.toUpperCase()}
