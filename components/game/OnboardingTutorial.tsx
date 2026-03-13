@@ -83,9 +83,9 @@ function WordRevealVisual() {
   ];
 
   return (
-    <div style={{ display: "flex", gap: 4, justifyContent: "center", flexWrap: "wrap" }}>
+    <div style={{ display: "flex", gap: 3, justifyContent: "center", flexWrap: "nowrap" }}>
       {tiles.map(({ letter, revealed }, i) => (
-        <div key={i} style={revealed ? revealedTile : blankTile}>
+        <div key={i} style={{ ...(revealed ? revealedTile : blankTile), width: 26, height: 34, fontSize: 12 }}>
           {revealed ? letter : ""}
         </div>
       ))}

@@ -690,13 +690,6 @@ export function GameBoard() {
         </div>
       )}
 
-      {/* Reveal phase - show loading while animation plays */}
-      {state.phase === "REVEAL" && (
-        <p className="text-sm text-[#a0a0a0] animate-pulse">
-          Revealing your letters...
-        </p>
-      )}
-
       {/* Game over result */}
       {isGameOver && (
         <div className="contents phase-enter-scale">
