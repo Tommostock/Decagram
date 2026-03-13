@@ -11,6 +11,7 @@ export function createInitialState(dailyWord: string, dateKey: string): GameStat
     revealedPositions: [],
     guesses: [],
     currentInput: "",
+    inputHistory: [],
     selectedInputPosition: null,
     keyboardStatus: {},
     maxGuesses: MAX_GUESSES,

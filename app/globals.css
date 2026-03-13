@@ -83,6 +83,21 @@
     0%, 100% { opacity: 0.3; }
     50% { opacity: 0.5; }
   }
+
+  @keyframes slideInUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideOutDown {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(20px); }
+  }
+
+  @keyframes scaleIn {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+  }
 }
 
 /* Theme CSS variables - dark */
@@ -174,6 +189,21 @@ html[data-theme="dark"] .glass-button {
 .glass-button.active {
   position: relative;
   box-shadow: 0 0 12px rgba(232, 175, 72, 0.3);
+}
+
+/* Phase transition animations */
+.phase-enter {
+  animation: slideInUp 0.4s ease-out forwards;
+}
+
+.phase-enter-scale {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+/* Colour-blind mode overrides */
+html[data-colorblind="true"] {
+  --color-correct: #2979ff;
+  --color-present: #ff9100;
 }
 
 /* Mobile keyboard dock — fixed at bottom of viewport like native iOS keyboard */

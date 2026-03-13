@@ -1,6 +1,7 @@
 "use client";
 
 import type { LetterStatus } from "@/types";
+import { getKeyboardColors, getTileColors } from "@/lib/color-blind-colors";
 
 interface KeyboardProps {
   onKeyPress: (key: string) => void;
@@ -8,6 +9,7 @@ interface KeyboardProps {
   onBackspace: () => void;
   keyboardStatus: Record<string, LetterStatus>;
   revealedLetters?: string[];
+  colorBlind?: boolean;
 }
 
 const ROWS = [
@@ -16,19 +18,16 @@ const ROWS = [
   ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "DEL"],
 ];
 
-const statusColors: Record<string, string> = {
-  correct: "#22c55e",
-  present: "#cc8d00",
-  absent: "#2a2a2a",
-};
-
 export function Keyboard({
   onKeyPress,
   onEnter,
   onBackspace,
   keyboardStatus,
   revealedLetters = [],
+  colorBlind = false,
 }: KeyboardProps) {
+  const statusColors = getKeyboardColors(colorBlind);
+  const tileColors = getTileColors(colorBlind);
   const handleClick = (key: string) => {
     if (key === "ENTER") onEnter();
     else if (key === "DEL") onBackspace();
@@ -53,11 +52,11 @@ export function Keyboard({
             if (isRevealed || status === "correct") {
               bgColor = statusColors.correct;
               opacity = 1;
-              borderColor = "#22c55e";
+              borderColor = statusColors.correct;
             } else if (status === "present") {
               bgColor = statusColors.present;
               opacity = 1;
-              borderColor = "#cc8d00";
+              borderColor = statusColors.present;
             } else if (isAbsent) {
               // Guessed letter confirmed not in word - dark grey
               bgColor = "var(--bg-key)";
@@ -94,9 +93,9 @@ export function Keyboard({
                     boxShadow: isRevealed
                       ? `inset 0 0 8px ${statusColors.correct}`
                       : status === "present"
-                        ? `0 0 12px rgba(204, 141, 0, 0.6)`
-                        : status
-                          ? `inset 0 0 8px ${statusColors[status]}`
+                        ? `0 0 12px ${tileColors.present.glow}`
+                        : status && status in statusColors
+                          ? `inset 0 0 8px ${statusColors[status as keyof typeof statusColors]}`
                           : "none",
                     transition: "all 0.15s ease",
                   }}

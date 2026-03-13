@@ -6,9 +6,10 @@ import type { Guess } from "@/types";
 interface GuessHistoryProps {
   guesses: Guess[];
   revealingIndex: number | null;
+  colorBlind?: boolean;
 }
 
-export function GuessHistory({ guesses, revealingIndex }: GuessHistoryProps) {
+export function GuessHistory({ guesses, revealingIndex, colorBlind = false }: GuessHistoryProps) {
   if (guesses.length === 0) return null;
 
   return (
@@ -27,6 +28,7 @@ export function GuessHistory({ guesses, revealingIndex }: GuessHistoryProps) {
               delay={letterIdx * 100}
               isRevealing={revealingIndex === guessIdx}
               size="sm"
+              colorBlind={colorBlind}
             />
           ))}
         </div>

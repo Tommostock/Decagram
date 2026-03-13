@@ -24,6 +24,9 @@ import { Keyboard } from "./Keyboard";
 import { ResultModal } from "./ResultModal";
 import { PauseMenu } from "./PauseMenu";
 import { DefinitionPanel } from "./DefinitionPanel";
+import { OnboardingTutorial } from "./OnboardingTutorial";
+import { getNewlyUnlocked, loadUnlockedAchievements } from "@/lib/achievements";
+import { useColorBlind } from "@/lib/color-blind-context";
 
 type Action =
   | { type: "RESTORE"; state: GameState }
@@ -33,6 +36,7 @@ type Action =
   | { type: "FINISH_REVEAL" }
   | { type: "TYPE_LETTER"; letter: string }
   | { type: "DELETE_LETTER" }
+  | { type: "UNDO_INPUT" }
   | { type: "SELECT_INPUT_POSITION"; position: number }
   | { type: "SUBMIT_GUESS"; guess: Guess; newPhase: GamePhase }
   | { type: "CLEAR_INPUT" }
@@ -85,21 +89,30 @@ function reducer(state: GameState, action: Action): GameState {
       return { ...state, phase: "GUESSING" };
 
     case "TYPE_LETTER": {
+      const history = [...state.inputHistory, state.currentInput].slice(-20);
       // If a position is selected, replace at that position
       if (state.selectedInputPosition !== null) {
         const chars = state.currentInput.split("");
         chars[state.selectedInputPosition] = action.letter;
         const newInput = chars.join("");
-        return { ...state, currentInput: newInput, selectedInputPosition: null };
+        return { ...state, currentInput: newInput, inputHistory: history, selectedInputPosition: null };
       }
       // Otherwise, append to end (normal behavior)
       if (state.currentInput.length >= WORD_LENGTH) return state;
-      return { ...state, currentInput: state.currentInput + action.letter };
+      return { ...state, currentInput: state.currentInput + action.letter, inputHistory: history };
     }
 
     case "DELETE_LETTER": {
       if (state.currentInput.length === 0) return state;
-      return { ...state, currentInput: state.currentInput.slice(0, -1), selectedInputPosition: null };
+      const history = [...state.inputHistory, state.currentInput].slice(-20);
+      return { ...state, currentInput: state.currentInput.slice(0, -1), inputHistory: history, selectedInputPosition: null };
+    }
+
+    case "UNDO_INPUT": {
+      if (state.inputHistory.length === 0) return state;
+      const history = [...state.inputHistory];
+      const previous = history.pop()!;
+      return { ...state, currentInput: previous, inputHistory: history, selectedInputPosition: null };
     }
 
     case "SELECT_INPUT_POSITION": {
@@ -115,16 +128,18 @@ function reducer(state: GameState, action: Action): GameState {
         ...state,
         guesses: [...state.guesses, action.guess],
         currentInput: "",
+        inputHistory: [],
+        selectedInputPosition: null,
         keyboardStatus: newKeyboard,
         phase: action.newPhase,
       };
     }
 
     case "CLEAR_INPUT":
-      return { ...state, currentInput: "" };
+      return { ...state, currentInput: "", inputHistory: [], selectedInputPosition: null };
 
     case "GIVE_UP":
-      return { ...state, phase: "LOSE", currentInput: "" };
+      return { ...state, phase: "LOSE", currentInput: "", inputHistory: [], selectedInputPosition: null };
 
     case "PLAY_AGAIN":
       return {
@@ -167,6 +182,9 @@ export function GameBoard() {
   const [revealAllLetters, setRevealAllLetters] = useState(false);
   const [isRevealingAnswer, setIsRevealingAnswer] = useState(false);
   const submittingRef = useRef(false);
+  const { colorBlindMode, toggleColorBlindMode } = useColorBlind();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>(() => loadUnlockedAchievements());
 
   const showToast = useCallback((message: string) => {
     setToast({ message, visible: true });
@@ -231,20 +249,31 @@ export function GameBoard() {
     }
   }, []);
 
+  // Show onboarding for first-time players
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hasSeenOnboarding = localStorage.getItem("decagram-onboarding-seen");
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
   // Physical keyboard handler
   useEffect(() => {
     if (state.phase !== "GUESSING") return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-
-      if (e.key === "Enter") {
+      if (e.altKey) return;
+      if (e.key === "z" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        dispatch({ type: "UNDO_INPUT" });
+      } else if (e.key === "Enter") {
         e.preventDefault();
         handleSubmitGuess();
       } else if (e.key === "Backspace") {
         e.preventDefault();
         dispatch({ type: "DELETE_LETTER" });
-      } else if (/^[a-zA-Z]$/.test(e.key)) {
+      } else if (/^[a-zA-Z]$/.test(e.key) && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         dispatch({ type: "TYPE_LETTER", letter: e.key.toUpperCase() });
       }
@@ -328,6 +357,17 @@ export function GameBoard() {
         newStats.lastPlayedDate = dateKey;
         setStats(newStats);
         saveStats(newStats);
+
+        // Check for newly unlocked achievements
+        const newBadges = getNewlyUnlocked(newStats);
+        if (newBadges.length > 0) {
+          setUnlockedAchievements(loadUnlockedAchievements());
+          for (const badge of newBadges) {
+            setTimeout(() => {
+              showToast(`${badge.icon} ${badge.name} unlocked!`);
+            }, 500);
+          }
+        }
       }
 
       submittingRef.current = false;
@@ -438,6 +478,9 @@ export function GameBoard() {
           onStartNewGame={handleStartNewGame}
           onRevealAnswer={handleRevealAnswer}
           isGameOver={isGameOver}
+          colorBlindMode={colorBlindMode}
+          onToggleColorBlind={toggleColorBlindMode}
+          unlockedAchievements={unlockedAchievements}
         />
       )}
 
@@ -532,6 +575,7 @@ export function GameBoard() {
             guesses={state.guesses}
             revealAll={revealAllLetters}
             isRevealingAnswer={isRevealingAnswer}
+            colorBlind={colorBlindMode}
           />
           {/* Selected letters info */}
           <div className="mt-3 flex justify-center gap-1.5">
@@ -556,7 +600,7 @@ export function GameBoard() {
 
       {/* Letter selection phase */}
       {state.phase === "LETTER_SELECTION" && (
-        <GlassPanel className="w-full">
+        <GlassPanel className="w-full phase-enter">
           <LetterPicker
             selectedConsonants={state.selectedConsonants}
             selectedVowel={state.selectedVowel}
@@ -573,7 +617,7 @@ export function GameBoard() {
 
       {/* Guessing phase */}
       {state.phase === "GUESSING" && (
-        <>
+        <div className="contents phase-enter">
           {/* Guess history */}
           {state.guesses.length > 0 && (
             <div className="w-full">
@@ -583,6 +627,7 @@ export function GameBoard() {
               <GuessHistory
                 guesses={state.guesses}
                 revealingIndex={revealingGuessIdx}
+                colorBlind={colorBlindMode}
               />
             </div>
           )}
@@ -639,9 +684,10 @@ export function GameBoard() {
               onBackspace={handleBackspace}
               keyboardStatus={state.keyboardStatus}
               revealedLetters={[...state.selectedConsonants, state.selectedVowel]}
+              colorBlind={colorBlindMode}
             />
           </div>
-        </>
+        </div>
       )}
 
       {/* Reveal phase - show loading while animation plays */}
@@ -653,12 +699,13 @@ export function GameBoard() {
 
       {/* Game over result */}
       {isGameOver && (
-        <>
+        <div className="contents phase-enter-scale">
           {/* Show final guesses */}
           <div className="w-full">
             <GuessHistory
               guesses={state.guesses}
               revealingIndex={null}
+              colorBlind={colorBlindMode}
             />
           </div>
 
@@ -674,7 +721,17 @@ export function GameBoard() {
               onClose={() => setShowResultModal(false)}
             />
           )}
-        </>
+        </div>
+      )}
+
+      {/* Onboarding tutorial for first-time players */}
+      {showOnboarding && (
+        <OnboardingTutorial
+          onComplete={() => {
+            setShowOnboarding(false);
+            localStorage.setItem("decagram-onboarding-seen", "true");
+          }}
+        />
       )}
 
       {/* Toast */}

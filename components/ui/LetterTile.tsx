@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { LetterStatus } from "@/types";
+import { getTileColors } from "@/lib/color-blind-colors";
 
 interface LetterTileProps {
   letter?: string;
@@ -9,17 +10,20 @@ interface LetterTileProps {
   delay?: number;
   isRevealing?: boolean;
   size?: "sm" | "md";
+  colorBlind?: boolean;
 }
 
-// tile status color map
-const statusColors: Record<string, { bg: string; border: string }> = {
-  correct: { bg: "#22c55e", border: "#16a34a" },
-  present: { bg: "#cc8d00", border: "#8b6009" },
-  absent: { bg: "#374151", border: "#4b5563" },
-  unknown: { bg: "transparent", border: "#3a3a3a" },
-  empty: { bg: "transparent", border: "#2a2a2a" },
-  revealed: { bg: "#22c55e", border: "#16a34a" },
-};
+function getStatusColors(colorBlind: boolean): Record<string, { bg: string; border: string; glow?: string }> {
+  const tile = getTileColors(colorBlind);
+  return {
+    correct: { bg: tile.correct.bg, border: tile.correct.border, glow: tile.correct.glow },
+    present: { bg: tile.present.bg, border: tile.present.border, glow: tile.present.glow },
+    absent: { bg: tile.absent.bg, border: tile.absent.border },
+    unknown: { bg: "transparent", border: "#3a3a3a" },
+    empty: { bg: "transparent", border: "#2a2a2a" },
+    revealed: { bg: tile.correct.bg, border: tile.correct.border, glow: tile.correct.glow },
+  };
+}
 
 export function LetterTile({
   letter,
@@ -27,6 +31,7 @@ export function LetterTile({
   delay = 0,
   isRevealing = false,
   size = "md",
+  colorBlind = false,
 }: LetterTileProps) {
   const [flipped, setFlipped] = useState(false);
   const [showBack, setShowBack] = useState(false);
@@ -42,6 +47,7 @@ export function LetterTile({
     }
   }, [isRevealing, delay]);
 
+  const statusColors = getStatusColors(colorBlind);
   const colors = statusColors[status] || statusColors.empty;
   const sizeClasses =
     size === "sm"
@@ -77,7 +83,7 @@ export function LetterTile({
               transform: "rotateX(180deg)",
               backfaceVisibility: "hidden",
               color: "#fff",
-              boxShadow: (status === "present" ? "0 0 12px rgba(204, 141, 0, 0.6)" : "none") + ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
+              boxShadow: (status === "present" ? `0 0 12px ${statusColors.present.glow}` : status === "correct" || status === "revealed" ? `0 0 12px ${statusColors.correct.glow}` : "none") + ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
             }}
           >
             {letter?.toUpperCase()}
@@ -105,7 +111,7 @@ export function LetterTile({
               : "#fff",
           transform: letter && !flipped ? "scale(1)" : undefined,
           boxShadow:
-            (isCorrect || isRevealed ? "0 0 12px rgba(34, 197, 94, 0.5)" : status === "present" ? "0 0 12px rgba(204, 141, 0, 0.6)" : "none") +
+            (isCorrect || isRevealed ? `0 0 12px ${statusColors.correct.glow}` : status === "present" ? `0 0 12px ${statusColors.present.glow}` : "none") +
             ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
           backdropFilter: "blur(8px)",
           background: colors.bg === "transparent"
