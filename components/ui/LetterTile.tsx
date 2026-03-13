@@ -76,7 +76,7 @@ export function LetterTile({
               borderColor: backColors.border,
               transform: "rotateX(180deg)",
               backfaceVisibility: "hidden",
-              color: status === "present" ? "#2a2a2a" : "#fff",
+              color: "#fff",
               boxShadow: (status === "present" ? "0 0 12px rgba(204, 141, 0, 0.6)" : "none") + ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
             }}
           >
@@ -102,8 +102,6 @@ export function LetterTile({
           color:
             status === "empty" || status === "unknown"
               ? "#e8e8e8"
-              : status === "present"
-              ? "#2a2a2a"
               : "#fff",
           transform: letter && !flipped ? "scale(1)" : undefined,
           boxShadow:
