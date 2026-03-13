@@ -73,10 +73,10 @@ export function Keyboard({
             const isInteractive = !isAbsent;
 
             return (
-              <div key={key} className={`relative ${isSpecial ? "flex-[1.4]" : "flex-1"}`}>
+              <div key={key} style={isSpecial ? { flex: "1.5 1 0", minWidth: 0 } : { flex: "1 1 0", minWidth: 0 }}>
                 <button
                   onClick={() => handleClick(key)}
-                  className={`glass-button w-full h-12 text-sm rounded-lg font-semibold transition-all duration-100 select-none relative
+                  className={`glass-button w-full h-12 ${isSpecial ? "text-[11px]" : "text-sm"} rounded-lg font-semibold transition-all duration-100 select-none relative
                     ${isActive ? "active" : ""}
                     ${isInteractive ? "hover:scale-105 hover:brightness-110 active:scale-95 active:brightness-75" : ""}
                   `}
