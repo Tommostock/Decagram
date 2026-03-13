@@ -36,7 +36,7 @@ export function LetterTile({
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
-    if (isRevealing && status === "revealed") {
+    if (isRevealing && status === "correct") {
       const timer = setTimeout(() => setIsFlipped(true), delay);
       return () => clearTimeout(timer);
     }
@@ -49,20 +49,20 @@ export function LetterTile({
       ? "w-[30px] h-[38px] text-sm sm:w-[34px] sm:h-[42px]"
       : "w-[32px] h-[40px] text-base sm:w-[40px] sm:h-[50px] sm:text-xl";
 
-  if (isRevealing && status === "revealed") {
+  if (isRevealing && status === "correct") {
     const frontColors = statusColors.empty;
     const backColors = colors;
 
     return (
-      <div className={`${sizeClasses} select-none`} style={{ perspective: "1000px" }}>
+      <div className={`${sizeClasses} select-none`} style={{ perspective: "1200px" }}>
         <div
           style={{
             width: "100%",
             height: "100%",
             position: "relative",
             transformStyle: "preserve-3d",
-            transform: isFlipped ? "rotateX(0deg)" : "rotateX(90deg)",
-            transition: `transform 0.5s ease-out`,
+            transform: isFlipped ? "rotateY(0deg)" : "rotateY(-90deg)",
+            transition: `transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)`,
           }}
         >
           {/* Front: blank tile */}
@@ -97,7 +97,7 @@ export function LetterTile({
               backgroundColor: backColors.bg,
               color: "#fff",
               fontWeight: "bold",
-              transform: "rotateX(180deg)",
+              transform: "rotateY(90deg)",
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               boxShadow: `0 0 12px ${statusColors.correct.glow}, inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)`,
