@@ -6,10 +6,11 @@ import type { Guess } from "@/types";
 interface GuessHistoryProps {
   guesses: Guess[];
   revealingIndex: number | null;
+  winGuessIndex?: number | null;
   colorBlind?: boolean;
 }
 
-export function GuessHistory({ guesses, revealingIndex, colorBlind = false }: GuessHistoryProps) {
+export function GuessHistory({ guesses, revealingIndex, winGuessIndex = null, colorBlind = false }: GuessHistoryProps) {
   if (guesses.length === 0) return null;
 
   return (
@@ -24,9 +25,11 @@ export function GuessHistory({ guesses, revealingIndex, colorBlind = false }: Gu
             <LetterTile
               key={letterIdx}
               letter={result.letter}
-              status={revealingIndex === guessIdx ? "unknown" : result.status}
-              delay={letterIdx * 100}
+              status={result.status}
+              delay={letterIdx * 150}
               isRevealing={revealingIndex === guessIdx}
+              isBouncing={winGuessIndex === guessIdx}
+              bounceDelay={letterIdx * 80}
               size="sm"
               colorBlind={colorBlind}
             />

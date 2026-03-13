@@ -181,6 +181,8 @@ export function GameBoard() {
   const [showHint, setShowHint] = useState(false);
   const [revealAllLetters, setRevealAllLetters] = useState(false);
   const [isRevealingAnswer, setIsRevealingAnswer] = useState(false);
+  const [isCelebrating, setIsCelebrating] = useState(false);
+  const [winGuessIndex, setWinGuessIndex] = useState<number | null>(null);
   const submittingRef = useRef(false);
   const { colorBlindMode, toggleColorBlindMode } = useColorBlind();
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -323,8 +325,8 @@ export function GameBoard() {
     dispatch({ type: "SUBMIT_GUESS", guess, newPhase });
     setRevealingGuessIdx(guessIdx);
 
-    // Wait for reveal animation, then finalize
-    const revealTime = WORD_LENGTH * 100 + 500;
+    // Wait for tile flip reveal animation to complete
+    const revealTime = WORD_LENGTH * 150 + 600;
     setTimeout(() => {
       setRevealingGuessIdx(null);
 
@@ -350,8 +352,19 @@ export function GameBoard() {
             newStats.maxStreak,
             newStats.currentStreak
           );
+
+          // Trigger win celebration bounce
+          setWinGuessIndex(guessIdx);
+          setIsCelebrating(true);
+          const celebrationTime = WORD_LENGTH * 80 + 800;
+          setTimeout(() => {
+            setIsCelebrating(false);
+            setWinGuessIndex(null);
+            setShowResultModal(true);
+          }, celebrationTime);
         } else {
           newStats.currentStreak = 0;
+          setShowResultModal(true);
         }
 
         newStats.lastPlayedDate = dateKey;
@@ -575,6 +588,7 @@ export function GameBoard() {
             guesses={state.guesses}
             revealAll={revealAllLetters}
             isRevealingAnswer={isRevealingAnswer}
+            isCelebrating={isCelebrating}
             colorBlind={colorBlindMode}
           />
           {/* Selected letters info */}
@@ -627,6 +641,7 @@ export function GameBoard() {
               <GuessHistory
                 guesses={state.guesses}
                 revealingIndex={revealingGuessIdx}
+                winGuessIndex={winGuessIndex}
                 colorBlind={colorBlindMode}
               />
             </div>
@@ -698,6 +713,7 @@ export function GameBoard() {
             <GuessHistory
               guesses={state.guesses}
               revealingIndex={null}
+              winGuessIndex={winGuessIndex}
               colorBlind={colorBlindMode}
             />
           </div>
