@@ -11,7 +11,6 @@ interface WordDisplayProps {
   guesses?: Guess[];
   revealAll?: boolean;
   isRevealingAnswer?: boolean;
-  isCelebrating?: boolean;
   colorBlind?: boolean;
 }
 
@@ -22,7 +21,6 @@ export function WordDisplay({
   guesses = [],
   revealAll = false,
   isRevealingAnswer = false,
-  isCelebrating = false,
   colorBlind = false,
 }: WordDisplayProps) {
   const revealedSet = new Set(revealedPositions);
@@ -64,8 +62,6 @@ export function WordDisplay({
             status={status}
             delay={i * 150}
             isRevealing={(isRevealing && isInitialReveal) || (isNewlyRevealed && isRevealingAnswer)}
-            isBouncing={isCelebrating && status !== "empty"}
-            bounceDelay={i * 80}
             colorBlind={colorBlind}
           />
         );

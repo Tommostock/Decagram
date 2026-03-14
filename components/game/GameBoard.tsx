@@ -588,7 +588,6 @@ export function GameBoard() {
             guesses={state.guesses}
             revealAll={revealAllLetters}
             isRevealingAnswer={isRevealingAnswer}
-            isCelebrating={isCelebrating}
             colorBlind={colorBlindMode}
           />
           {/* Selected letters info */}
