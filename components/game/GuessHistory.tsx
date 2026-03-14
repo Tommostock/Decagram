@@ -28,8 +28,6 @@ export function GuessHistory({ guesses, revealingIndex, winGuessIndex = null, co
               status={result.status}
               delay={letterIdx * 150}
               isRevealing={revealingIndex === guessIdx}
-              isBouncing={winGuessIndex === guessIdx}
-              bounceDelay={letterIdx * 80}
               size="sm"
               colorBlind={colorBlind}
             />

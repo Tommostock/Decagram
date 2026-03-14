@@ -60,7 +60,7 @@ export function WordDisplay({
             key={i}
             letter={letter}
             status={status}
-            delay={i * 150}
+            delay={i * 100}
             isRevealing={(isRevealing && isInitialReveal) || (isNewlyRevealed && isRevealingAnswer)}
             colorBlind={colorBlind}
           />
