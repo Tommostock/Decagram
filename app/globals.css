@@ -215,6 +215,23 @@ html[data-colorblind="true"] {
   --color-present: #ff9100;
 }
 
+/* Wordle-style tile flip — rotateX with color swap at midpoint */
+.tile-flip {
+  animation: tileReveal 500ms ease-in-out both;
+}
+
+@keyframes tileReveal {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(-90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
 /* Mobile keyboard dock — fixed at bottom of viewport like native iOS keyboard */
 @media (max-width: 639px) {
   .keyboard-dock {

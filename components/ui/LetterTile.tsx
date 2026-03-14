@@ -33,16 +33,16 @@ export function LetterTile({
   size = "md",
   colorBlind = false,
 }: LetterTileProps) {
-  // "idle" → "half" (first 250ms: scale down to flat) → "done" (next 250ms: scale back up with color)
-  const [phase, setPhase] = useState<"idle" | "half" | "done">("idle");
+  const [flipping, setFlipping] = useState(false);
+  const [showColor, setShowColor] = useState(false);
 
   useEffect(() => {
     if (!isRevealing) return;
 
-    // After delay, start the flip
-    const t1 = setTimeout(() => setPhase("half"), delay);
-    // At midpoint, swap to colored state
-    const t2 = setTimeout(() => setPhase("done"), delay + 250);
+    // Start the CSS flip animation after the stagger delay
+    const t1 = setTimeout(() => setFlipping(true), delay);
+    // Swap colors at the midpoint (250ms into the 500ms animation) when tile is edge-on
+    const t2 = setTimeout(() => setShowColor(true), delay + 250);
 
     return () => {
       clearTimeout(t1);
@@ -59,16 +59,10 @@ export function LetterTile({
       ? "w-[30px] h-[38px] text-sm sm:w-[34px] sm:h-[42px]"
       : "w-[32px] h-[40px] text-base sm:w-[40px] sm:h-[50px] sm:text-xl";
 
-  // For revealing tiles: Wordle-style vertical squash flip
-  if (isRevealing) {
-    // First half: empty tile squashing down. Second half: colored tile expanding up.
-    const showColor = phase === "done";
+  if (isRevealing || flipping) {
     const bg = showColor ? colors.bg : emptyColors.bg;
     const border = showColor ? colors.border : emptyColors.border;
     const textColor = showColor ? "#fff" : "#e8e8e8";
-
-    // scaleY: idle=1, half=0 (flat), done=1 (full again)
-    const scaleY = phase === "half" ? 0 : 1;
 
     const glow = showColor
       ? status === "present"
@@ -79,21 +73,29 @@ export function LetterTile({
       : "none";
 
     return (
-      <div
-        className={`${sizeClasses} flex items-center justify-center rounded-lg border-2 font-bold select-none`}
-        style={{
-          backgroundColor: bg === "transparent" ? "var(--bg-tile-empty)" : bg,
-          borderColor: border,
-          color: textColor,
-          transform: `scaleY(${scaleY})`,
-          transition: "transform 250ms ease-in-out, background-color 0ms, border-color 0ms",
-          boxShadow:
-            glow +
-            (glow !== "none" ? ", " : "") +
-            "inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        {letter?.toUpperCase()}
+      <div className={`${sizeClasses} select-none`} style={{ perspective: "600px" }}>
+        <div
+          className={flipping ? "tile-flip" : ""}
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "0.5rem",
+            border: "2px solid",
+            borderColor: border,
+            backgroundColor: bg === "transparent" ? "var(--bg-tile-empty)" : bg,
+            color: textColor,
+            fontWeight: "bold",
+            boxShadow:
+              glow +
+              (glow !== "none" ? ", " : "") +
+              "inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          {letter?.toUpperCase()}
+        </div>
       </div>
     );
   }

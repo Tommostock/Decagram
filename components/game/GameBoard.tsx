@@ -291,7 +291,7 @@ export function GameBoard() {
     setIsRevealingWord(true);
 
     // After reveal animation finishes, move to guessing
-    const totalDelay = WORD_LENGTH * 150 + 600;
+    const totalDelay = WORD_LENGTH * 100 + 500 + 200;
     setTimeout(() => {
       setIsRevealingWord(false);
       dispatch({ type: "FINISH_REVEAL" });
