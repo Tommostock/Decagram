@@ -74,7 +74,7 @@ export function LetterTile({
             height: "100%",
             position: "relative",
             transformStyle: "preserve-3d",
-            transform: isFlipped ? "rotateX(0deg)" : "rotateX(90deg)",
+            transform: isFlipped ? "rotateY(0deg)" : "rotateY(90deg)",
             transition: `transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)`,
           }}
         >
@@ -115,7 +115,7 @@ export function LetterTile({
               backgroundColor: backColors.bg,
               color: "#fff",
               fontWeight: "bold",
-              transform: "rotateX(180deg)",
+              transform: "rotateY(180deg)",
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               boxShadow:
@@ -150,7 +150,11 @@ export function LetterTile({
               : "none") + ", inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)",
         backdropFilter: "blur(8px)",
         background: colors.bg === "transparent" ? "var(--bg-tile-empty)" : colors.bg,
-        animation: isBouncing ? "winBounce 0.6s ease" : undefined,
+        animation: isBouncing
+          ? "winBounce 0.6s ease"
+          : (isCorrect || isRevealed)
+            ? "heartbeat 0.5s ease-in-out, pulseGlow 0.6s ease-in-out"
+            : undefined,
         animationDelay: isBouncing ? `${bounceDelay}ms` : undefined,
         animationFillMode: isBouncing ? "both" : undefined,
       }}
