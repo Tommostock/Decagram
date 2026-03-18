@@ -472,6 +472,9 @@ export function GameBoard() {
     newStats.lastPlayedDate = dateKey;
     setStats(newStats);
     saveStats(newStats);
+
+    // Suppress result modal BEFORE dispatch so it doesn't flash
+    setShowResultModal(false);
     dispatch({ type: "GIVE_UP" });
     setIsPaused(false);
     // Reveal all letters on the board with animation, then show the result modal
