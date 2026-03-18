@@ -187,6 +187,7 @@ export function GameBoard() {
   const [isRevealingNewCorrect, setIsRevealingNewCorrect] = useState(false);
   const [newCorrectPositions, setNewCorrectPositions] = useState<Set<number>>(new Set());
   const submittingRef = useRef(false);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const { colorBlindMode, toggleColorBlindMode } = useColorBlind();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>(() => loadUnlockedAchievements());
@@ -254,6 +255,11 @@ export function GameBoard() {
     }
   }, []);
 
+  // Clear all pending timers on unmount to prevent state updates after unmount
+  useEffect(() => {
+    return () => { timersRef.current.forEach(clearTimeout); };
+  }, []);
+
   // Show onboarding for first-time players
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -270,10 +276,10 @@ export function GameBoard() {
 
     // After reveal animation finishes, move to guessing
     const totalDelay = WORD_LENGTH * 150 + 600;
-    setTimeout(() => {
+    timersRef.current.push(setTimeout(() => {
       setIsRevealingWord(false);
       dispatch({ type: "FINISH_REVEAL" });
-    }, totalDelay);
+    }, totalDelay));
   }, []);
 
   // Handle guess submission
@@ -286,21 +292,21 @@ export function GameBoard() {
     if (input.length !== WORD_LENGTH) {
       showToast(`Need ${WORD_LENGTH} letters`);
       setShaking(true);
-      setTimeout(() => setShaking(false), 500);
+      timersRef.current.push(setTimeout(() => setShaking(false), 500));
       return;
     }
 
     if (!isValidWord(input)) {
       showToast("Not a valid word");
       setShaking(true);
-      setTimeout(() => setShaking(false), 500);
+      timersRef.current.push(setTimeout(() => setShaking(false), 500));
       return;
     }
 
     if (state.guesses.some(g => g.results.map(r => r.letter).join("") === input)) {
       showToast("Already guessed");
       setShaking(true);
-      setTimeout(() => setShaking(false), 500);
+      timersRef.current.push(setTimeout(() => setShaking(false), 500));
       return;
     }
 
@@ -342,7 +348,7 @@ export function GameBoard() {
 
     // Wait for guess row reveal animation, then animate new correct letters in word display
     const revealTime = WORD_LENGTH * 100 + 500;
-    setTimeout(() => {
+    timersRef.current.push(setTimeout(() => {
       setRevealingGuessIdx(null);
 
       // Update stats
@@ -381,9 +387,9 @@ export function GameBoard() {
         if (newBadges.length > 0) {
           setUnlockedAchievements(loadUnlockedAchievements());
           newBadges.forEach((badge, idx) => {
-            setTimeout(() => {
+            timersRef.current.push(setTimeout(() => {
               showToast(`${badge.icon} ${badge.name} unlocked!`);
-            }, 500 + idx * 2500);
+            }, 500 + idx * 2500));
           });
         }
       }
@@ -393,12 +399,12 @@ export function GameBoard() {
         setIsRevealingNewCorrect(false);
         setNewCorrectPositions(new Set());
         if (newPhase === "WIN") {
-          setTimeout(() => setShowResultModal(true), 500);
+          timersRef.current.push(setTimeout(() => setShowResultModal(true), 500));
         }
       }
 
       submittingRef.current = false;
-    }, revealTime);
+    }, revealTime));
   }, [state, stats, dateKey, showToast]);
 
   // Physical keyboard handler (must be after handleSubmitGuess declaration)
@@ -492,10 +498,10 @@ export function GameBoard() {
     // Last tile starts flipping at (WORD_LENGTH-1)*150, takes 375ms to flip,
     // then pause 1500ms so the user can read the full word before the modal
     const totalDelay = (WORD_LENGTH - 1) * 150 + 375 + 1500;
-    setTimeout(() => {
+    timersRef.current.push(setTimeout(() => {
       setIsRevealingAnswer(false);
       setShowResultModal(true);
-    }, totalDelay);
+    }, totalDelay));
   }, [stats, dateKey]);
 
   const handleStartNewGame = useCallback(() => {

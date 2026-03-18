@@ -7,7 +7,9 @@ const STATIC_ASSETS = [
 // Install: pre-cache shell
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(STATIC_ASSETS))
+      .catch(() => {}) // non-fatal: app still works if pre-cache fails
   );
   self.skipWaiting();
 });
@@ -24,6 +26,7 @@ self.addEventListener("activate", (event) => {
             .map((key) => caches.delete(key))
         )
       )
+      .catch(() => {}) // non-fatal: stale caches will just persist until next activation
   );
   self.clients.claim();
 });
