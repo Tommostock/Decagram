@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import type { Guess, DailyStats } from "@/types";
 import { GoldenButton } from "@/components/ui/GoldenButton";
-import { CountdownTimer } from "./CountdownTimer";
 import { generateShareText, copyToClipboard } from "@/lib/share";
 
 interface ResultModalProps {

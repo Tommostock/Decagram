@@ -19,11 +19,3 @@ export function getDailyWord(dateKey: string): string {
   const index = hash % answerWords.length;
   return (answerWords as string[])[index].toUpperCase();
 }
-
-export function getTimeUntilNextPuzzle(): number {
-  const now = new Date();
-  const tomorrow = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)
-  );
-  return tomorrow.getTime() - now.getTime();
-}
