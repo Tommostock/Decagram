@@ -286,7 +286,7 @@ export function GameBoard() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [state.phase, state.currentInput, state.guesses.length]);
+  }, [state.phase, state.currentInput, state.guesses.length, handleSubmitGuess]);
 
   // Handle letter confirmation (transition from picker to reveal)
   const handleConfirmLetters = useCallback(() => {
@@ -304,6 +304,7 @@ export function GameBoard() {
   // Handle guess submission
   const handleSubmitGuess = useCallback(() => {
     if (submittingRef.current) return;
+    if (state.phase !== "GUESSING") return;
 
     const input = state.currentInput;
 
@@ -316,6 +317,13 @@ export function GameBoard() {
 
     if (!isValidWord(input)) {
       showToast("Not a valid word");
+      setShaking(true);
+      setTimeout(() => setShaking(false), 500);
+      return;
+    }
+
+    if (state.guesses.some(g => g.results.map(r => r.letter).join("") === input)) {
+      showToast("Already guessed");
       setShaking(true);
       setTimeout(() => setShaking(false), 500);
       return;
@@ -397,11 +405,11 @@ export function GameBoard() {
         const newBadges = getNewlyUnlocked(newStats);
         if (newBadges.length > 0) {
           setUnlockedAchievements(loadUnlockedAchievements());
-          for (const badge of newBadges) {
+          newBadges.forEach((badge, idx) => {
             setTimeout(() => {
               showToast(`${badge.icon} ${badge.name} unlocked!`);
-            }, 500);
-          }
+            }, 500 + idx * 2500);
+          });
         }
       }
 
@@ -441,6 +449,13 @@ export function GameBoard() {
     setShowResultModal(true);
     setShowHint(false);
     setRevealAllLetters(false);
+    setIsRevealingAnswer(false);
+    setIsRevealingNewCorrect(false);
+    setNewCorrectPositions(new Set());
+    setRevealingGuessIdx(null);
+    setShaking(false);
+    setIsRevealingWord(false);
+    submittingRef.current = false;
     setWordSeed(newSeed);
     const newWord = getDailyWord(`${dateKey}-${newSeed}`);
     dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
@@ -488,6 +503,13 @@ export function GameBoard() {
     setShowResultModal(true);
     setShowHint(false);
     setRevealAllLetters(false);
+    setIsRevealingAnswer(false);
+    setIsRevealingNewCorrect(false);
+    setNewCorrectPositions(new Set());
+    setRevealingGuessIdx(null);
+    setShaking(false);
+    setIsRevealingWord(false);
+    submittingRef.current = false;
     setWordSeed(newSeed);
     const newWord = getDailyWord(`${dateKey}-${newSeed}`);
     dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
@@ -516,7 +538,7 @@ export function GameBoard() {
 
   const isGameOver = state.phase === "WIN" || state.phase === "LOSE";
 
-  const canPause = state.phase === "REVEAL" || state.phase === "GUESSING" || (isGameOver && !showResultModal);
+  const canPause = state.phase === "GUESSING" || (isGameOver && !showResultModal);
 
   return (
     <div className={`w-full max-w-lg mx-auto flex flex-col items-center gap-4 ${state.phase === "GUESSING" ? "pb-[190px] sm:pb-0" : ""}`}>
