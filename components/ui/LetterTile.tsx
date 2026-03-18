@@ -69,7 +69,7 @@ export function LetterTile({
     borderColor = "#2a2a2a";
     textColor = "#e8e8e8";
     glowShadow = "none";
-    displayLetter = undefined;
+    displayLetter = letter;
   } else {
     bgColor = colors.bg === "transparent" ? "var(--bg-tile-empty)" : colors.bg;
     borderColor = colors.border;

@@ -13,7 +13,6 @@ interface WordDisplayProps {
   isRevealingAnswer?: boolean;
   isRevealingNewCorrect?: boolean;
   newCorrectPositions?: Set<number>;
-  pendingCorrectPositions?: Set<number>;
   colorBlind?: boolean;
 }
 
@@ -26,16 +25,18 @@ export function WordDisplay({
   isRevealingAnswer = false,
   isRevealingNewCorrect = false,
   newCorrectPositions = new Set(),
-  pendingCorrectPositions = new Set(),
   colorBlind = false,
 }: WordDisplayProps) {
   const revealedSet = new Set(revealedPositions);
 
-  // Build a map of position → letter for correctly guessed positions
+  // Build a map of position → letter for correctly guessed positions,
+  // excluding positions currently being animated
   const correctGuessMap = new Map<number, string>();
   for (const guess of guesses) {
     guess.results.forEach((result, idx) => {
       if (result.status === "correct") {
+        // During animation, skip positions being revealed (they animate from empty)
+        if (isRevealingNewCorrect && newCorrectPositions.has(idx)) return;
         correctGuessMap.set(idx, result.letter);
       }
     });
@@ -45,18 +46,11 @@ export function WordDisplay({
     <div className="flex justify-center gap-1 sm:gap-1.5">
       {Array.from({ length: WORD_LENGTH }).map((_, i) => {
         const isInitialReveal = revealedSet.has(i);
-        const isPending = pendingCorrectPositions.has(i);
         const isBeingRevealedNow = isRevealingNewCorrect && newCorrectPositions.has(i);
+        const correctGuessLetter = correctGuessMap.get(i);
 
-        // Suppress correctly guessed letters that are still pending their word-display
-        // animation — treat them as empty until the flip fires
-        const correctGuessLetter = (!isPending && !isBeingRevealedNow)
-          ? correctGuessMap.get(i)
-          : undefined;
+        const isNewlyRevealed = revealAll && !isInitialReveal && !correctGuessMap.get(i) && !isBeingRevealedNow;
 
-        const isNewlyRevealed = revealAll && !isInitialReveal && !correctGuessMap.get(i);
-
-        // For positions being revealed now: pull letter directly from word
         const letter = isInitialReveal
           ? word[i]
           : isBeingRevealedNow
@@ -76,12 +70,16 @@ export function WordDisplay({
           (isNewlyRevealed && isRevealingAnswer) ||
           isBeingRevealedNow;
 
+        // Newly correct positions use guess-row timing (i * 100ms) to sync;
+        // initial reveal and reveal-answer use word-display timing (i * 150ms)
+        const delay = isBeingRevealedNow ? i * 100 : i * 150;
+
         return (
           <LetterTile
             key={i}
             letter={letter}
             status={status}
-            delay={i * 150}
+            delay={delay}
             isRevealing={shouldAnimate}
             colorBlind={colorBlind}
           />

@@ -183,8 +183,6 @@ export function GameBoard() {
   const [isRevealingAnswer, setIsRevealingAnswer] = useState(false);
   const [isRevealingNewCorrect, setIsRevealingNewCorrect] = useState(false);
   const [newCorrectPositions, setNewCorrectPositions] = useState<Set<number>>(new Set());
-  // Positions that are correct but hidden until their word-display flip animation starts
-  const [pendingCorrectPositions, setPendingCorrectPositions] = useState<Set<number>>(new Set());
   const submittingRef = useRef(false);
   const { colorBlindMode, toggleColorBlindMode } = useColorBlind();
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -342,15 +340,15 @@ export function GameBoard() {
       }
     });
 
-    // Hide freshly correct positions immediately — they stay dark until the word
-    // display flip animation fires after the guess row finishes
-    if (freshCorrect.size > 0) {
-      setPendingCorrectPositions(freshCorrect);
-    }
-
     // On WIN, suppress the result modal BEFORE dispatch so it never flashes
     if (newPhase === "WIN" && freshCorrect.size > 0) {
       setShowResultModal(false);
+    }
+
+    // Start word display animation simultaneously with guess row
+    if (freshCorrect.size > 0) {
+      setNewCorrectPositions(freshCorrect);
+      setIsRevealingNewCorrect(true);
     }
 
     dispatch({ type: "SUBMIT_GUESS", guess, newPhase });
@@ -404,20 +402,13 @@ export function GameBoard() {
         }
       }
 
-      // Promote pending positions → animating in word display
+      // Clear word display animation (it started simultaneously with guess row)
       if (freshCorrect.size > 0) {
-        // Clear pending (they were keeping tiles dark), promote to animating
-        setPendingCorrectPositions(new Set());
-        setNewCorrectPositions(freshCorrect);
-        setIsRevealingNewCorrect(true);
-        const wordRevealTime = WORD_LENGTH * 150 + 375;
-        setTimeout(() => {
-          setIsRevealingNewCorrect(false);
-          setNewCorrectPositions(new Set());
-          if (newPhase === "WIN") {
-            setTimeout(() => setShowResultModal(true), 500);
-          }
-        }, wordRevealTime);
+        setIsRevealingNewCorrect(false);
+        setNewCorrectPositions(new Set());
+        if (newPhase === "WIN") {
+          setTimeout(() => setShowResultModal(true), 500);
+        }
       }
 
       submittingRef.current = false;
@@ -632,7 +623,7 @@ export function GameBoard() {
             isRevealingAnswer={isRevealingAnswer}
             isRevealingNewCorrect={isRevealingNewCorrect}
             newCorrectPositions={newCorrectPositions}
-            pendingCorrectPositions={pendingCorrectPositions}
+
             colorBlind={colorBlindMode}
           />
           {/* Selected letters info */}

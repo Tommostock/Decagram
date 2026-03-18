@@ -28,7 +28,7 @@ export function GuessHistory({ guesses, revealingIndex, colorBlind = false }: Gu
               <LetterTile
                 key={letterIdx}
                 letter={result.letter}
-                status={revealingIndex === guessIdx ? "unknown" : result.status}
+                status={result.status}
                 delay={letterIdx * 100}
                 isRevealing={revealingIndex === guessIdx}
                 size="sm"
