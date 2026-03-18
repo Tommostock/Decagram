@@ -263,31 +263,6 @@ export function GameBoard() {
     }
   }, []);
 
-  // Physical keyboard handler
-  useEffect(() => {
-    if (state.phase !== "GUESSING") return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.altKey) return;
-      if (e.key === "z" && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        dispatch({ type: "UNDO_INPUT" });
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        handleSubmitGuess();
-      } else if (e.key === "Backspace") {
-        e.preventDefault();
-        dispatch({ type: "DELETE_LETTER" });
-      } else if (/^[a-zA-Z]$/.test(e.key) && !e.ctrlKey && !e.metaKey) {
-        e.preventDefault();
-        dispatch({ type: "TYPE_LETTER", letter: e.key.toUpperCase() });
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [state.phase, state.currentInput, state.guesses.length, handleSubmitGuess]);
-
   // Handle letter confirmation (transition from picker to reveal)
   const handleConfirmLetters = useCallback(() => {
     dispatch({ type: "CONFIRM_LETTERS" });
@@ -425,6 +400,31 @@ export function GameBoard() {
       submittingRef.current = false;
     }, revealTime);
   }, [state, stats, dateKey, showToast]);
+
+  // Physical keyboard handler (must be after handleSubmitGuess declaration)
+  useEffect(() => {
+    if (state.phase !== "GUESSING") return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey) return;
+      if (e.key === "z" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        dispatch({ type: "UNDO_INPUT" });
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        handleSubmitGuess();
+      } else if (e.key === "Backspace") {
+        e.preventDefault();
+        dispatch({ type: "DELETE_LETTER" });
+      } else if (/^[a-zA-Z]$/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        dispatch({ type: "TYPE_LETTER", letter: e.key.toUpperCase() });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [state.phase, state.currentInput, state.guesses.length, handleSubmitGuess]);
 
   // Keyboard callbacks for on-screen keyboard
   const handleKeyPress = useCallback(
