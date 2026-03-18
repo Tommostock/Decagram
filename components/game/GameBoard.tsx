@@ -183,6 +183,8 @@ export function GameBoard() {
   const [isRevealingAnswer, setIsRevealingAnswer] = useState(false);
   const [isRevealingNewCorrect, setIsRevealingNewCorrect] = useState(false);
   const [newCorrectPositions, setNewCorrectPositions] = useState<Set<number>>(new Set());
+  // Positions that are correct but hidden until their word-display flip animation starts
+  const [pendingCorrectPositions, setPendingCorrectPositions] = useState<Set<number>>(new Set());
   const submittingRef = useRef(false);
   const { colorBlindMode, toggleColorBlindMode } = useColorBlind();
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -340,6 +342,12 @@ export function GameBoard() {
       }
     });
 
+    // Hide freshly correct positions immediately — they stay dark until the word
+    // display flip animation fires after the guess row finishes
+    if (freshCorrect.size > 0) {
+      setPendingCorrectPositions(freshCorrect);
+    }
+
     dispatch({ type: "SUBMIT_GUESS", guess, newPhase });
     setRevealingGuessIdx(guessIdx);
 
@@ -391,19 +399,20 @@ export function GameBoard() {
         }
       }
 
-      // Animate newly correct positions in the word display
+      // Promote pending positions → animating in word display
       if (freshCorrect.size > 0) {
         // On WIN, hide the result modal until the word reveal finishes
         if (newPhase === "WIN") {
           setShowResultModal(false);
         }
+        // Clear pending (they were keeping tiles dark), promote to animating
+        setPendingCorrectPositions(new Set());
         setNewCorrectPositions(freshCorrect);
         setIsRevealingNewCorrect(true);
         const wordRevealTime = WORD_LENGTH * 150 + 375;
         setTimeout(() => {
           setIsRevealingNewCorrect(false);
           setNewCorrectPositions(new Set());
-          // Now show the result modal after word reveal completes
           if (newPhase === "WIN") {
             setTimeout(() => setShowResultModal(true), 500);
           }
@@ -619,6 +628,7 @@ export function GameBoard() {
             isRevealingAnswer={isRevealingAnswer}
             isRevealingNewCorrect={isRevealingNewCorrect}
             newCorrectPositions={newCorrectPositions}
+            pendingCorrectPositions={pendingCorrectPositions}
             colorBlind={colorBlindMode}
           />
           {/* Selected letters info */}

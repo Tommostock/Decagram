@@ -13,6 +13,7 @@ interface WordDisplayProps {
   isRevealingAnswer?: boolean;
   isRevealingNewCorrect?: boolean;
   newCorrectPositions?: Set<number>;
+  pendingCorrectPositions?: Set<number>;
   colorBlind?: boolean;
 }
 
@@ -25,6 +26,7 @@ export function WordDisplay({
   isRevealingAnswer = false,
   isRevealingNewCorrect = false,
   newCorrectPositions = new Set(),
+  pendingCorrectPositions = new Set(),
   colorBlind = false,
 }: WordDisplayProps) {
   const revealedSet = new Set(revealedPositions);
@@ -43,28 +45,36 @@ export function WordDisplay({
     <div className="flex justify-center gap-1 sm:gap-1.5">
       {Array.from({ length: WORD_LENGTH }).map((_, i) => {
         const isInitialReveal = revealedSet.has(i);
-        const correctGuessLetter = correctGuessMap.get(i);
-        const isNewlyCorrect = newCorrectPositions.has(i);
+        const isPending = pendingCorrectPositions.has(i);
+        const isBeingRevealedNow = isRevealingNewCorrect && newCorrectPositions.has(i);
 
-        // Priority: initially revealed > correctly guessed > reveal-all > empty
-        const isNewlyRevealed = revealAll && !isInitialReveal && !correctGuessLetter;
+        // Suppress correctly guessed letters that are still pending their word-display
+        // animation — treat them as empty until the flip fires
+        const correctGuessLetter = (!isPending && !isBeingRevealedNow)
+          ? correctGuessMap.get(i)
+          : undefined;
+
+        const isNewlyRevealed = revealAll && !isInitialReveal && !correctGuessMap.get(i);
+
+        // For positions being revealed now: pull letter directly from word
         const letter = isInitialReveal
           ? word[i]
-          : correctGuessLetter ?? (revealAll ? word[i] : undefined);
+          : isBeingRevealedNow
+            ? word[i]
+            : correctGuessLetter ?? (revealAll ? word[i] : undefined);
 
         const status: "revealed" | "correct" | "empty" = isInitialReveal
           ? "revealed"
-          : correctGuessLetter
+          : (correctGuessLetter || isBeingRevealedNow)
             ? "correct"
             : isNewlyRevealed
               ? "revealed"
               : "empty";
 
-        // Animate: initial reveal, reveal-answer, or newly correct from a guess
         const shouldAnimate =
           (isRevealing && isInitialReveal) ||
           (isNewlyRevealed && isRevealingAnswer) ||
-          (isNewlyCorrect && isRevealingNewCorrect);
+          isBeingRevealedNow;
 
         return (
           <LetterTile
