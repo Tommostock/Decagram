@@ -86,6 +86,9 @@ function reducer(state: GameState, action: Action): GameState {
     }
 
     case "FINISH_REVEAL":
+      // Only transition to GUESSING if still in REVEAL phase
+      // (player may have given up during the reveal animation)
+      if (state.phase !== "REVEAL") return state;
       return { ...state, phase: "GUESSING" };
 
     case "TYPE_LETTER": {
