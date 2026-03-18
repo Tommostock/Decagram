@@ -99,14 +99,6 @@
     100% { opacity: 1; transform: scale(1); }
   }
 
-  @keyframes winBounce {
-    0%, 100% { transform: translateY(0); }
-    20% { transform: translateY(-24px); }
-    40% { transform: translateY(0); }
-    55% { transform: translateY(-12px); }
-    70% { transform: translateY(0); }
-    85% { transform: translateY(-4px); }
-  }
 }
 
 /* Theme CSS variables - dark */
@@ -207,6 +199,17 @@ html[data-theme="dark"] .glass-button {
 
 .phase-enter-scale {
   animation: scaleIn 0.4s ease-out forwards;
+}
+
+/* Tile reveal animation — scaleY shrink then grow */
+@keyframes tileRevealShrink {
+  0% { transform: scaleY(1); }
+  100% { transform: scaleY(0); }
+}
+
+@keyframes tileRevealGrow {
+  0% { transform: scaleY(0); }
+  100% { transform: scaleY(1); }
 }
 
 /* Colour-blind mode overrides */
