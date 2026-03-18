@@ -84,12 +84,22 @@ export function LetterTile({
 
   const boxShadow = `${glowShadow}, inset 0 1px 2px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(0, 0, 0, 0.1)`;
 
-  // CSS animation instead of inline transition
-  let animation: string | undefined;
+  // CSS animation — use longhand properties to avoid React shorthand/longhand conflict
+  let animationName: string | undefined;
+  let animationDuration: string | undefined;
+  let animationTimingFunction: string | undefined;
+  let animationFillMode: string | undefined;
+
   if (phase === "shrink") {
-    animation = "tileRevealShrink 187ms ease-in forwards";
+    animationName = "tileRevealShrink";
+    animationDuration = "187ms";
+    animationTimingFunction = "ease-in";
+    animationFillMode = "forwards";
   } else if (phase === "grow") {
-    animation = "tileRevealGrow 187ms ease-out forwards";
+    animationName = "tileRevealGrow";
+    animationDuration = "187ms";
+    animationTimingFunction = "ease-out";
+    animationFillMode = "forwards";
   }
 
   return (
@@ -102,7 +112,10 @@ export function LetterTile({
           color: textColor,
           boxShadow,
           backdropFilter: "blur(8px)",
-          animation,
+          animationName,
+          animationDuration,
+          animationTimingFunction,
+          animationFillMode,
         }}
       >
         {displayLetter?.toUpperCase()}

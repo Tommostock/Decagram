@@ -40,7 +40,7 @@ export function ResultModal({
     const success = await copyToClipboard(text);
     if (success) {
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), 3000);
     }
   }, [dateKey, guesses, won, maxGuesses]);
 
@@ -146,7 +146,9 @@ export function ResultModal({
                     background:
                       won && guesses.length === i + 1
                         ? "#22c55e"
-                        : "var(--bg-key)",
+                        : count > 0
+                          ? "#4a5568"
+                          : "var(--bg-key)",
                     color: "#fff",
                   }}
                 >

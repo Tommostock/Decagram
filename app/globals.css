@@ -201,6 +201,13 @@ html[data-theme="dark"] .glass-button {
   animation: scaleIn 0.4s ease-out forwards;
 }
 
+/* Shake animation — standalone copy outside @theme to prevent tree-shaking */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
 /* Tile reveal animation — scaleY shrink then grow */
 @keyframes tileRevealShrink {
   0% { transform: scaleY(1); }

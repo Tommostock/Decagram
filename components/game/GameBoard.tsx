@@ -521,7 +521,7 @@ export function GameBoard() {
   const canPause = state.phase === "REVEAL" || state.phase === "GUESSING" || (isGameOver && !showResultModal);
 
   return (
-    <div className={`w-full max-w-lg mx-auto flex flex-col items-center gap-4 ${state.phase === "GUESSING" ? "pb-[250px] sm:pb-0" : ""}`}>
+    <div className={`w-full max-w-lg mx-auto flex flex-col items-center gap-4 ${state.phase === "GUESSING" ? "pb-[190px] sm:pb-0" : ""}`}>
       {/* Pause menu overlay */}
       {isPaused && (
         <PauseMenu
@@ -635,19 +635,26 @@ export function GameBoard() {
           <div className="mt-3 flex justify-center gap-1.5">
             {[...state.selectedConsonants, state.selectedVowel]
               .filter(Boolean)
-              .map((l) => (
-                <span
-                  key={l}
-                  className="text-xs px-2 py-0.5 rounded"
-                  style={{
-                    background: "rgba(245, 200, 66, 0.1)",
-                    color: "#f5c842",
-                    border: "1px solid rgba(245, 200, 66, 0.2)",
-                  }}
-                >
-                  {l}
-                </span>
-              ))}
+              .map((l) => {
+                const isInWord = state.phase !== "LETTER_SELECTION" &&
+                  state.revealedPositions.some(pos => state.dailyWord[pos]?.toUpperCase() === l.toUpperCase());
+                const showDimmed = state.phase !== "LETTER_SELECTION" && state.phase !== "REVEAL" && !isInWord;
+                return (
+                  <span
+                    key={l}
+                    className="text-xs px-2 py-0.5 rounded transition-opacity duration-500"
+                    style={{
+                      background: showDimmed ? "rgba(100, 100, 100, 0.1)" : "rgba(245, 200, 66, 0.1)",
+                      color: showDimmed ? "#666" : "#f5c842",
+                      border: showDimmed ? "1px solid rgba(100, 100, 100, 0.2)" : "1px solid rgba(245, 200, 66, 0.2)",
+                      opacity: showDimmed ? 0.5 : 1,
+                      textDecoration: showDimmed ? "line-through" : "none",
+                    }}
+                  >
+                    {l}
+                  </span>
+                );
+              })}
           </div>
         </GlassPanel>
       )}
@@ -737,7 +744,9 @@ export function GameBoard() {
               onEnter={handleEnter}
               onBackspace={handleBackspace}
               keyboardStatus={state.keyboardStatus}
-              revealedLetters={[...state.selectedConsonants, state.selectedVowel]}
+              revealedLetters={[...state.selectedConsonants, state.selectedVowel].filter(
+                l => state.revealedPositions.some(pos => state.dailyWord[pos]?.toUpperCase() === l.toUpperCase())
+              )}
               colorBlind={colorBlindMode}
             />
           </div>
@@ -756,7 +765,7 @@ export function GameBoard() {
             />
           </div>
 
-          {showResultModal && (
+          {showResultModal ? (
             <ResultModal
               won={state.phase === "WIN"}
               dailyWord={state.dailyWord}
@@ -767,6 +776,30 @@ export function GameBoard() {
               onPlayAgain={handlePlayAgain}
               onClose={() => setShowResultModal(false)}
             />
+          ) : (
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={handlePlayAgain}
+                className="px-6 py-3 rounded-xl font-bold text-sm transition-all"
+                style={{
+                  background: "linear-gradient(180deg, #f5c842, #b8860b)",
+                  color: "#1a1a1a",
+                }}
+              >
+                Play Again
+              </button>
+              <button
+                onClick={() => setShowResultModal(true)}
+                className="px-6 py-3 rounded-xl font-bold text-sm border transition-all"
+                style={{
+                  borderColor: "rgba(255,255,255,0.15)",
+                  color: "#e8e8e8",
+                  background: "rgba(40,40,40,0.8)",
+                }}
+              >
+                View Results
+              </button>
+            </div>
           )}
         </div>
       )}
