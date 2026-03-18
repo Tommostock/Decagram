@@ -761,7 +761,7 @@ export function GameBoard() {
           <div className="w-full">
             <GuessHistory
               guesses={state.guesses}
-              revealingIndex={null}
+              revealingIndex={revealingGuessIdx}
               colorBlind={colorBlindMode}
             />
           </div>
