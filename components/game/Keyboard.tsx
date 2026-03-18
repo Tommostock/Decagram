@@ -9,6 +9,7 @@ interface KeyboardProps {
   onBackspace: () => void;
   keyboardStatus: Record<string, LetterStatus>;
   revealedLetters?: string[];
+  missedLetters?: string[];
   colorBlind?: boolean;
 }
 
@@ -24,6 +25,7 @@ export function Keyboard({
   onBackspace,
   keyboardStatus,
   revealedLetters = [],
+  missedLetters = [],
   colorBlind = false,
 }: KeyboardProps) {
   const statusColors = getKeyboardColors(colorBlind);
@@ -42,7 +44,8 @@ export function Keyboard({
             const isSpecial = key === "ENTER" || key === "DEL";
             const status = keyboardStatus[key];
             const isRevealed = revealedLetters.includes(key);
-            const isAbsent = status === "absent";
+            const isMissed = missedLetters.includes(key);
+            const isAbsent = status === "absent" || isMissed;
 
             let bgColor: string;
             let opacity: number;

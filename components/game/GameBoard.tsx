@@ -742,6 +742,9 @@ export function GameBoard() {
               revealedLetters={[...state.selectedConsonants, state.selectedVowel].filter(
                 l => state.revealedPositions.some(pos => state.dailyWord[pos]?.toUpperCase() === l.toUpperCase())
               )}
+              missedLetters={[...state.selectedConsonants, state.selectedVowel].filter(
+                l => l && !state.revealedPositions.some(pos => state.dailyWord[pos]?.toUpperCase() === l.toUpperCase())
+              )}
               colorBlind={colorBlindMode}
             />
           </div>
