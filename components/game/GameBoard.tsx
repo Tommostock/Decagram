@@ -348,6 +348,11 @@ export function GameBoard() {
       setPendingCorrectPositions(freshCorrect);
     }
 
+    // On WIN, suppress the result modal BEFORE dispatch so it never flashes
+    if (newPhase === "WIN" && freshCorrect.size > 0) {
+      setShowResultModal(false);
+    }
+
     dispatch({ type: "SUBMIT_GUESS", guess, newPhase });
     setRevealingGuessIdx(guessIdx);
 
@@ -401,10 +406,6 @@ export function GameBoard() {
 
       // Promote pending positions → animating in word display
       if (freshCorrect.size > 0) {
-        // On WIN, hide the result modal until the word reveal finishes
-        if (newPhase === "WIN") {
-          setShowResultModal(false);
-        }
         // Clear pending (they were keeping tiles dark), promote to animating
         setPendingCorrectPositions(new Set());
         setNewCorrectPositions(freshCorrect);
