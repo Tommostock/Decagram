@@ -181,6 +181,8 @@ export function GameBoard() {
   const [showHint, setShowHint] = useState(false);
   const [revealAllLetters, setRevealAllLetters] = useState(false);
   const [isRevealingAnswer, setIsRevealingAnswer] = useState(false);
+  const [isRevealingNewCorrect, setIsRevealingNewCorrect] = useState(false);
+  const [newCorrectPositions, setNewCorrectPositions] = useState<Set<number>>(new Set());
   const submittingRef = useRef(false);
   const { colorBlindMode, toggleColorBlindMode } = useColorBlind();
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -320,14 +322,33 @@ export function GameBoard() {
     const { guess, newPhase } = makeGuess(state, input);
     const guessIdx = state.guesses.length;
 
+    // Find which positions are NEWLY correct (not already known)
+    const previouslyCorrect = new Set<number>();
+    for (const g of state.guesses) {
+      g.results.forEach((r, idx) => {
+        if (r.status === "correct") previouslyCorrect.add(idx);
+      });
+    }
+    // Also include initially revealed positions
+    for (const pos of state.revealedPositions) {
+      previouslyCorrect.add(pos);
+    }
+    const freshCorrect = new Set<number>();
+    guess.results.forEach((r, idx) => {
+      if (r.status === "correct" && !previouslyCorrect.has(idx)) {
+        freshCorrect.add(idx);
+      }
+    });
+
     dispatch({ type: "SUBMIT_GUESS", guess, newPhase });
     setRevealingGuessIdx(guessIdx);
 
-    // Wait for reveal animation, then finalize
+    // Wait for guess row reveal animation, then animate new correct letters in word display
     const revealTime = WORD_LENGTH * 100 + 500;
     setTimeout(() => {
       setRevealingGuessIdx(null);
 
+      // Update stats
       if (newPhase === "WIN" || newPhase === "LOSE") {
         const newStats = { ...stats };
         newStats.gamesPlayed++;
@@ -368,6 +389,25 @@ export function GameBoard() {
             }, 500);
           }
         }
+      }
+
+      // Animate newly correct positions in the word display
+      if (freshCorrect.size > 0) {
+        // On WIN, hide the result modal until the word reveal finishes
+        if (newPhase === "WIN") {
+          setShowResultModal(false);
+        }
+        setNewCorrectPositions(freshCorrect);
+        setIsRevealingNewCorrect(true);
+        const wordRevealTime = WORD_LENGTH * 150 + 375;
+        setTimeout(() => {
+          setIsRevealingNewCorrect(false);
+          setNewCorrectPositions(new Set());
+          // Now show the result modal after word reveal completes
+          if (newPhase === "WIN") {
+            setTimeout(() => setShowResultModal(true), 500);
+          }
+        }, wordRevealTime);
       }
 
       submittingRef.current = false;
@@ -577,6 +617,8 @@ export function GameBoard() {
             guesses={state.guesses}
             revealAll={revealAllLetters}
             isRevealingAnswer={isRevealingAnswer}
+            isRevealingNewCorrect={isRevealingNewCorrect}
+            newCorrectPositions={newCorrectPositions}
             colorBlind={colorBlindMode}
           />
           {/* Selected letters info */}
