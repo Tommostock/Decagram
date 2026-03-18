@@ -81,6 +81,7 @@ export function WordDisplay({
             status={status}
             delay={delay}
             isRevealing={shouldAnimate}
+            hideLetterBeforeFlip
             colorBlind={colorBlind}
           />
         );

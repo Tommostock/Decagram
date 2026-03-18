@@ -9,6 +9,7 @@ interface LetterTileProps {
   status?: LetterStatus | "empty" | "revealed";
   delay?: number;
   isRevealing?: boolean;
+  hideLetterBeforeFlip?: boolean;
   size?: "sm" | "md";
   colorBlind?: boolean;
 }
@@ -30,6 +31,7 @@ export function LetterTile({
   status = "empty",
   delay = 0,
   isRevealing = false,
+  hideLetterBeforeFlip = false,
   size = "md",
   colorBlind = false,
 }: LetterTileProps) {
@@ -69,7 +71,7 @@ export function LetterTile({
     borderColor = "#2a2a2a";
     textColor = "#e8e8e8";
     glowShadow = "none";
-    displayLetter = letter;
+    displayLetter = hideLetterBeforeFlip ? undefined : letter;
   } else {
     bgColor = colors.bg === "transparent" ? "var(--bg-tile-empty)" : colors.bg;
     borderColor = colors.border;
