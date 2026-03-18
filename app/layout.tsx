@@ -10,14 +10,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Decagram \u2014 Daily 10-Letter Word Puzzle",
+  title: "Decagram \u2014 10-Letter Word Puzzle",
   description:
-    "Guess the 10-letter word in 3 tries. Choose your letters, reveal the clues, crack the word. A new puzzle every day.",
-  keywords: ["word game", "puzzle", "daily", "wordle", "10 letters", "decagram"],
+    "Guess the 10-letter word in 3 tries. Choose your letters, reveal the clues, crack the word.",
+  keywords: ["word game", "puzzle", "wordle", "10 letters", "decagram"],
   manifest: "/manifest.webmanifest",
   openGraph: {
-    title: "Decagram \u2014 Daily 10-Letter Word Puzzle",
-    description: "Can you crack today's 10-letter word in 3 guesses?",
+    title: "Decagram \u2014 10-Letter Word Puzzle",
+    description: "Can you crack the 10-letter word in 3 guesses?",
     type: "website",
   },
   other: {

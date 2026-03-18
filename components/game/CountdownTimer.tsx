@@ -27,7 +27,7 @@ export function CountdownTimer() {
   return (
     <div className="text-center">
       <p className="text-xs text-[#a0a0a0] uppercase tracking-widest mb-1">
-        Next puzzle in
+        Next word in
       </p>
       <p
         className="text-2xl font-bold tracking-wider"

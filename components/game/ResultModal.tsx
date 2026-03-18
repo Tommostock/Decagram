@@ -91,7 +91,7 @@ export function ResultModal({
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
             {won
               ? `Solved in ${guesses.length} guess${guesses.length > 1 ? "es" : ""}`
-              : "Better luck tomorrow"}
+              : "Better luck next time"}
           </p>
         </div>
 

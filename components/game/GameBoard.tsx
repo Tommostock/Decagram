@@ -575,7 +575,7 @@ export function GameBoard() {
               color: "var(--text-muted)",
             }}
           >
-            DAILY 10-LETTER PUZZLE
+            10-LETTER WORD PUZZLE
           </p>
           <p className="text-[10px] tracking-wider mt-1.5 flex items-center justify-center gap-1">
             <span style={{ color: "var(--text-dim)" }}>Made by</span>
