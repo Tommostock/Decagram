@@ -1,10 +1,10 @@
 import type { GameState, Guess, LetterResult, LetterStatus } from "@/types";
 import { MAX_GUESSES } from "./constants";
 
-export function createInitialState(dailyWord: string, dateKey: string): GameState {
+export function createInitialState(word: string, dateKey: string): GameState {
   return {
     phase: "LETTER_SELECTION",
-    dailyWord,
+    word,
     dateKey,
     selectedConsonants: [],
     selectedVowel: "",
@@ -91,7 +91,7 @@ export function makeGuess(
   state: GameState,
   word: string
 ): { guess: Guess; newPhase: GameState["phase"] } {
-  const results = evaluateGuess(word, state.dailyWord);
+  const results = evaluateGuess(word, state.word);
   const guess: Guess = { word: word.toUpperCase(), results };
   const isCorrect = results.every((r) => r.status === "correct");
   const guessCount = state.guesses.length + 1;

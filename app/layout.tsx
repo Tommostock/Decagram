@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/lib/theme-context";
 import { ColorBlindProvider } from "@/lib/color-blind-context";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import "./globals.css";
 
 const inter = Inter({
@@ -49,11 +50,13 @@ export default function RootLayout({
             __html: "document.documentElement.setAttribute('data-theme','dark');",
           }}
         />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="apple-touch-icon" href="/icon-512.png" />
       </head>
       <body className={`${inter.variable} font-sans`}>
         <ThemeProvider>
-          <ColorBlindProvider>{children}</ColorBlindProvider>
+          <ColorBlindProvider>
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </ColorBlindProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,4 +1,4 @@
-import type { StoredGameState, DailyStats } from "@/types";
+import type { StoredGameState, GameStats } from "@/types";
 
 const GAME_STATE_KEY = "decagram-game";
 const STATS_KEY = "decagram-stats";
@@ -19,23 +19,23 @@ export function saveGameState(state: StoredGameState): void {
   localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
 }
 
-export function loadStats(): DailyStats {
+export function loadStats(): GameStats {
   if (typeof window === "undefined") return defaultStats();
   try {
     const raw = localStorage.getItem(STATS_KEY);
     if (!raw) return defaultStats();
-    return JSON.parse(raw) as DailyStats;
+    return JSON.parse(raw) as GameStats;
   } catch {
     return defaultStats();
   }
 }
 
-export function saveStats(stats: DailyStats): void {
+export function saveStats(stats: GameStats): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(STATS_KEY, JSON.stringify(stats));
 }
 
-function defaultStats(): DailyStats {
+function defaultStats(): GameStats {
   return {
     gamesPlayed: 0,
     gamesWon: 0,

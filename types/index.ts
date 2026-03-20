@@ -20,7 +20,7 @@ export interface Guess {
 
 export interface GameState {
   phase: GamePhase;
-  dailyWord: string;
+  word: string;
   dateKey: string;
   selectedConsonants: string[];
   selectedVowel: string;
@@ -33,7 +33,7 @@ export interface GameState {
   maxGuesses: number;
 }
 
-export interface DailyStats {
+export interface GameStats {
   gamesPlayed: number;
   gamesWon: number;
   currentStreak: number;

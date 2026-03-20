@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import type { GameState, GamePhase, Guess, DailyStats } from "@/types";
+import type { GameState, GamePhase, Guess, GameStats } from "@/types";
 import { VOWELS, CONSONANTS, REQUIRED_CONSONANTS, WORD_LENGTH } from "@/lib/constants";
-import { getTodayKey, getDailyWord } from "@/lib/daily-word";
+import { getTodayKey, pickWord } from "@/lib/daily-word";
 import {
   createInitialState,
   calculateRevealedPositions,
@@ -41,7 +41,7 @@ type Action =
   | { type: "SUBMIT_GUESS"; guess: Guess; newPhase: GamePhase }
   | { type: "CLEAR_INPUT" }
   | { type: "GIVE_UP" }
-  | { type: "PLAY_AGAIN"; dailyWord: string };
+  | { type: "PLAY_AGAIN"; word: string };
 
 function reducer(state: GameState, action: Action): GameState {
   switch (action.type) {
@@ -74,7 +74,7 @@ function reducer(state: GameState, action: Action): GameState {
 
     case "CONFIRM_LETTERS": {
       const positions = calculateRevealedPositions(
-        state.dailyWord,
+        state.word,
         state.selectedConsonants,
         state.selectedVowel
       );
@@ -146,7 +146,7 @@ function reducer(state: GameState, action: Action): GameState {
 
     case "PLAY_AGAIN":
       return {
-        ...createInitialState(action.dailyWord, state.dateKey),
+        ...createInitialState(action.word, state.dateKey),
       };
 
     default:
@@ -165,7 +165,7 @@ export function GameBoard() {
     const saved = loadGameState();
     return saved?.wordSeed ?? Math.random().toString(36).slice(2, 8);
   });
-  const activeWord = getDailyWord(`${dateKey}-${wordSeed}`);
+  const activeWord = pickWord(`${dateKey}-${wordSeed}`);
 
   const [state, dispatch] = useReducer(
     reducer,
@@ -173,7 +173,7 @@ export function GameBoard() {
     () => createInitialState(activeWord, dateKey)
   );
 
-  const [stats, setStats] = useState<DailyStats>(() => loadStats());
+  const [stats, setStats] = useState<GameStats>(() => loadStats());
   const [toast, setToast] = useState({ message: "", visible: false });
   const [shaking, setShaking] = useState(false);
   const [revealingGuessIdx, setRevealingGuessIdx] = useState<number | null>(null);
@@ -463,8 +463,8 @@ export function GameBoard() {
     setIsRevealingWord(false);
     submittingRef.current = false;
     setWordSeed(newSeed);
-    const newWord = getDailyWord(`${dateKey}-${newSeed}`);
-    dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
+    const newWord = pickWord(`${dateKey}-${newSeed}`);
+    dispatch({ type: "PLAY_AGAIN", word: newWord });
     saveGameState({
       dateKey,
       phase: "LETTER_SELECTION",
@@ -517,8 +517,8 @@ export function GameBoard() {
     setIsRevealingWord(false);
     submittingRef.current = false;
     setWordSeed(newSeed);
-    const newWord = getDailyWord(`${dateKey}-${newSeed}`);
-    dispatch({ type: "PLAY_AGAIN", dailyWord: newWord });
+    const newWord = pickWord(`${dateKey}-${newSeed}`);
+    dispatch({ type: "PLAY_AGAIN", word: newWord });
     saveGameState({
       dateKey,
       phase: "LETTER_SELECTION",
@@ -646,7 +646,7 @@ export function GameBoard() {
         isGameOver) && (
         <GlassPanel className="w-full">
           <WordDisplay
-            word={state.dailyWord}
+            word={state.word}
             revealedPositions={state.revealedPositions}
             isRevealing={isRevealingWord}
             guesses={state.guesses}
@@ -663,7 +663,7 @@ export function GameBoard() {
               .filter(Boolean)
               .map((l) => {
                 const isInWord = state.phase !== "LETTER_SELECTION" &&
-                  state.revealedPositions.some(pos => state.dailyWord[pos]?.toUpperCase() === l.toUpperCase());
+                  state.revealedPositions.some(pos => state.word[pos]?.toUpperCase() === l.toUpperCase());
                 const showDimmed = state.phase !== "LETTER_SELECTION" && state.phase !== "REVEAL" && !isInWord;
                 return (
                   <span
@@ -758,7 +758,7 @@ export function GameBoard() {
             </button>
             {showHint && (
               <div className="mt-2">
-                <DefinitionPanel word={state.dailyWord} />
+                <DefinitionPanel word={state.word} />
               </div>
             )}
           </div>
@@ -771,10 +771,10 @@ export function GameBoard() {
               onBackspace={handleBackspace}
               keyboardStatus={state.keyboardStatus}
               revealedLetters={[...state.selectedConsonants, state.selectedVowel].filter(
-                l => state.revealedPositions.some(pos => state.dailyWord[pos]?.toUpperCase() === l.toUpperCase())
+                l => state.revealedPositions.some(pos => state.word[pos]?.toUpperCase() === l.toUpperCase())
               )}
               missedLetters={[...state.selectedConsonants, state.selectedVowel].filter(
-                l => l && !state.revealedPositions.some(pos => state.dailyWord[pos]?.toUpperCase() === l.toUpperCase())
+                l => l && !state.revealedPositions.some(pos => state.word[pos]?.toUpperCase() === l.toUpperCase())
               )}
               colorBlind={colorBlindMode}
             />
@@ -797,8 +797,7 @@ export function GameBoard() {
           {showResultModal ? (
             <ResultModal
               won={state.phase === "WIN"}
-              dailyWord={state.dailyWord}
-              dateKey={state.dateKey}
+              word={state.word}
               guesses={state.guesses}
               maxGuesses={state.maxGuesses}
               stats={stats}

@@ -72,11 +72,26 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Cache-first for Next.js static assets, fonts, images, JSON data
+  // Network-first for JSON data files so word list updates reach users immediately
+  if (url.pathname.endsWith(".json")) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // Cache-first for Next.js static assets, fonts, images
   if (
     url.pathname.startsWith("/_next/static/") ||
     url.pathname.startsWith("/fonts/") ||
-    url.pathname.endsWith(".json") ||
     url.pathname.endsWith(".woff2") ||
     url.pathname.endsWith(".woff") ||
     url.pathname.endsWith(".ttf") ||

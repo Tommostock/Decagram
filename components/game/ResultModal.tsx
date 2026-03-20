@@ -1,25 +1,23 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import type { Guess, DailyStats } from "@/types";
+import type { Guess, GameStats } from "@/types";
 import { GoldenButton } from "@/components/ui/GoldenButton";
 import { generateShareText, copyToClipboard } from "@/lib/share";
 
 interface ResultModalProps {
   won: boolean;
-  dailyWord: string;
-  dateKey: string;
+  word: string;
   guesses: Guess[];
   maxGuesses: number;
-  stats: DailyStats;
+  stats: GameStats;
   onPlayAgain?: () => void;
   onClose?: () => void;
 }
 
 export function ResultModal({
   won,
-  dailyWord,
-  dateKey,
+  word,
   guesses,
   maxGuesses,
   stats,
@@ -35,13 +33,13 @@ export function ResultModal({
   }, []);
 
   const handleShare = useCallback(async () => {
-    const text = generateShareText(dateKey, guesses, won, maxGuesses);
+    const text = generateShareText(guesses, won, maxGuesses);
     const success = await copyToClipboard(text);
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
     }
-  }, [dateKey, guesses, won, maxGuesses]);
+  }, [guesses, won, maxGuesses]);
 
   const winPct =
     stats.gamesPlayed > 0
@@ -104,7 +102,7 @@ export function ResultModal({
               className="text-xl font-bold tracking-widest"
               style={{ color: "#f5c842" }}
             >
-              {dailyWord}
+              {word}
             </p>
           </div>
         )}

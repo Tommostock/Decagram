@@ -1,4 +1,4 @@
-import type { DailyStats } from "@/types";
+import type { GameStats } from "@/types";
 
 export interface Achievement {
   id: string;
@@ -60,8 +60,8 @@ export const ACHIEVEMENTS: Achievement[] = [
 
 const ACHIEVEMENTS_KEY = "decagram-achievements";
 
-/** Takes DailyStats, returns array of achievement IDs that should be unlocked */
-export function checkAchievements(stats: DailyStats): string[] {
+/** Takes GameStats, returns array of achievement IDs that should be unlocked */
+export function checkAchievements(stats: GameStats): string[] {
   const unlocked: string[] = [];
 
   if (stats.gamesWon >= 1) unlocked.push("first_win");
@@ -95,7 +95,7 @@ export function saveUnlockedAchievements(ids: string[]): void {
 }
 
 /** Returns newly unlocked achievements (not previously saved) */
-export function getNewlyUnlocked(stats: DailyStats): Achievement[] {
+export function getNewlyUnlocked(stats: GameStats): Achievement[] {
   const currentlyUnlocked = checkAchievements(stats);
   const previouslySaved = loadUnlockedAchievements();
   const newIds = currentlyUnlocked.filter((id) => !previouslySaved.includes(id));

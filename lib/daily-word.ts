@@ -14,7 +14,7 @@ export function getTodayKey(): string {
   return now.toISOString().split("T")[0];
 }
 
-export function getDailyWord(dateKey: string): string {
+export function pickWord(dateKey: string): string {
   const words = answerWords as string[];
   if (words.length === 0) return "CATEGORIES"; // safety fallback if word list is empty
   const hash = hashString(dateKey);
