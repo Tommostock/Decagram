@@ -547,7 +547,7 @@ export function GameBoard() {
   const canPause = state.phase === "GUESSING" || (isGameOver && !showResultModal);
 
   return (
-    <div className={`w-full max-w-lg mx-auto flex flex-col items-center gap-4 ${state.phase === "GUESSING" ? "pb-[190px] sm:pb-0" : ""}`}>
+    <div className={`w-full max-w-lg mx-auto flex flex-col items-center gap-4 ${state.phase === "GUESSING" ? "pb-[200px] sm:pb-0" : ""}`}>
       {/* Pause menu overlay */}
       {isPaused && (
         <PauseMenu

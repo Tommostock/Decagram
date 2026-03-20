@@ -237,10 +237,10 @@ html[data-colorblind="true"] {
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     border-top: 1px solid var(--border-keyboard-dock, rgba(255, 255, 255, 0.06));
-    padding-top: 8px;
+    padding-top: 10px;
     padding-left: 4px;
     padding-right: 4px;
-    padding-bottom: max(env(safe-area-inset-bottom, 0px), 10px);
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px);
   }
 }
 
