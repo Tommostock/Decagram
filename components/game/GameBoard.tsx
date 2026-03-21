@@ -603,7 +603,7 @@ export function GameBoard() {
                 e.currentTarget.style.textDecoration = "none";
               }}
             >
-              Spektator
+              Spektator <span style={{ fontFamily: '"True Lies", cursive', color: "#D22223", fontSize: "12px", fontWeight: "bold" }}>Games</span>
             </a>
           </p>
         </div>
